@@ -404,18 +404,18 @@ var M = {
            
             var AdoptionArtifact = data;
             
-            // alert(33)
+            alert(33)
             //ios
             M.Contract = web3.eth.contract(AdoptionArtifact.abi).at("0x9796b2045affaad9f4a6cadfc86d49aa60c3738f");
             // var MyContract = web3.eth.contract(AdoptionArtifact.abi).at("0xfb0b8970a3f51b6ba30993e876fc3c3dfe8f87f2");
             M.walletAddr = web3.eth.accounts[0];
             // callback(M.Contract, M.walletAddr)
-            alert(444)
-            M.Contract.createPackage.sendTransaction( randomHash, {from: web3.eth.accounts[0],value:web3.toWei(0.1, 'ether')}, function(r, data){
-                alert(r)
-                console.log(r)
-                console.log(data)
-            })
+            // alert(444)
+            // M.Contract.createPackage.sendTransaction( randomHash, {from: M.walletAddr,value:web3.toWei(0.1, 'ether')}, function(r, data){
+            //     alert(r)
+            //     console.log(r)
+            //     console.log(data)
+            // })
 
             // M.PunkState.web3ready = true;
             // callback(M.punkContract, web3.eth.accounts[0])
@@ -462,23 +462,30 @@ var M = {
         //     console.log(data)
 
         // })
-        M.Contract.createPackage.sendTransaction(randomHash, {from: M.walletAddr,value:web3.toWei(playMoney, 'ether')}, function(r, data){
-            // console.log(r);
-            console.log(data);
-                if(data != undefined){
-                    callback(1, {
-                        randomHash: randomHash
-                        , transactionHash: data
-                    });
-                }else{
-                    callback(0, {
-                        randomHash: randomHash
-                        , transactionHash: data
-                    });
-                }
+
+        // alert(web3.toWei(0.1, 'ether'))
+        M.Contract.createPackage.sendTransaction( randomHash, {from: M.walletAddr,value:web3.toWei(0.1, 'ether')}, function(r, data){
+                alert(r)
+                console.log(r)
+                console.log(data)
+            })
+        // M.Contract.createPackage.sendTransaction(randomHash, {from: M.walletAddr,value:web3.toWei(playMoney+'', 'ether')}, function(r, data){
+        //     // console.log(r);
+        //     console.log(data);
+        //         if(data != undefined){
+        //             callback(1, {
+        //                 randomHash: randomHash
+        //                 , transactionHash: data
+        //             });
+        //         }else{
+        //             callback(0, {
+        //                 randomHash: randomHash
+        //                 , transactionHash: data
+        //             });
+        //         }
                 
                
-        })
+        // })
 
         // M.Contract.createPackage.sendTransaction(randomHash, {from: M.walletAddr,value:web3.toWei(playMoney, 'ether')})
         // .then(function(value) {
