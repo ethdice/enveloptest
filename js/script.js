@@ -218,9 +218,9 @@ var M = {
                 }else if($(this).val().length > 20){
                     str = '最长输入20个字符'
                     isHasError = true;
-                // }else if($(this).val().length < 6){
-                //     isHasError = true;
-                    // str = '最少输入6个字符'
+                }else if($(this).val().length < 6){
+                    isHasError = true;
+                    str = '最少输入6个字符'
                 }else{
                     isHasError = false;
                 }
@@ -324,9 +324,9 @@ var M = {
             if(playMoney == '' || word == '' || count == ''){
                 return;
             }
-            if(word.length < 6){
-                $('input[name="word"]').parent().addClass('error');
-            }
+            // if(word.length < 6){
+            //     $('input[name="word"]').parent().addClass('error');
+            // }
             if(btn.hasClass('disabled')){
                 return;
             }
@@ -353,7 +353,7 @@ var M = {
                             , gasCount: gasLimit
                             , gasPrice: gasPrice
                         }
-        // alert('create1')
+        alert('create1')
                         M.createPackage( contract, playMoney, function(r, data){
                             console.log(r);
                             console.log(data);
@@ -404,12 +404,12 @@ var M = {
            
             var AdoptionArtifact = data;
             
-            alert(33)
+            // alert(1)
             //ios
             M.Contract = web3.eth.contract(AdoptionArtifact.abi).at("0x9796b2045affaad9f4a6cadfc86d49aa60c3738f");
             // var MyContract = web3.eth.contract(AdoptionArtifact.abi).at("0xfb0b8970a3f51b6ba30993e876fc3c3dfe8f87f2");
             M.walletAddr = web3.eth.accounts[0];
-            // callback(M.Contract, M.walletAddr)
+            callback(M.Contract, M.walletAddr)
             // alert(444)
             // M.Contract.createPackage.sendTransaction( randomHash, {from: M.walletAddr,value:web3.toWei(0.1, 'ether')}, function(r, data){
             //     alert(r)
@@ -463,7 +463,7 @@ var M = {
 
         // })
 
-        // alert(web3.toWei(0.1, 'ether'))
+        alert(web3.toWei(0.1, 'ether'))
         M.Contract.createPackage.sendTransaction( randomHash, {from: M.walletAddr,value:web3.toWei(0.1, 'ether')}, function(r, data){
                 alert(r)
                 console.log(r)
