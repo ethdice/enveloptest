@@ -150,6 +150,10 @@ var M = {
         $('.pop-btn-open, .view-detail').click(function(){
             M.jumpUrl($(this).attr('url'));
         })
+
+        $('body').on('click', '.record-list a', function(){
+            M.jumpUrl($(this).attr('url'));
+        })
         
 
         $('.pop-close').click(function(){
@@ -214,8 +218,8 @@ var M = {
                 }else if($(this).val().length > 20){
                     str = '最长输入20个字符'
                     isHasError = true;
-                }else if($(this).val().length < 6){
-                    isHasError = true;
+                // }else if($(this).val().length < 6){
+                //     isHasError = true;
                     // str = '最少输入6个字符'
                 }else{
                     isHasError = false;
@@ -320,6 +324,9 @@ var M = {
             if(playMoney == '' || word == '' || count == ''){
                 return;
             }
+            if(word.length < 6){
+                $('input[name="word"]').parent().addClass('error');
+            }
             if(btn.hasClass('disabled')){
                 return;
             }
@@ -397,18 +404,18 @@ var M = {
            
             var AdoptionArtifact = data;
             
-            alert(33)
+            // alert(33)
             //ios
             M.Contract = web3.eth.contract(AdoptionArtifact.abi).at("0x9796b2045affaad9f4a6cadfc86d49aa60c3738f");
             // var MyContract = web3.eth.contract(AdoptionArtifact.abi).at("0xfb0b8970a3f51b6ba30993e876fc3c3dfe8f87f2");
             M.walletAddr = web3.eth.accounts[0];
-            callback(M.Contract, M.walletAddr)
-            // alert(444)
-            // M.Contract.createPackage.sendTransaction( randomHash, {from: web3.eth.accounts[0],value:web3.toWei(0.1, 'ether')}, function(r, data){
-            //     alert(r)
-            //     console.log(r)
-            //     console.log(data)
-            // })
+            // callback(M.Contract, M.walletAddr)
+            alert(444)
+            M.Contract.createPackage.sendTransaction( randomHash, {from: web3.eth.accounts[0],value:web3.toWei(0.1, 'ether')}, function(r, data){
+                alert(r)
+                console.log(r)
+                console.log(data)
+            })
 
             // M.PunkState.web3ready = true;
             // callback(M.punkContract, web3.eth.accounts[0])
@@ -587,7 +594,7 @@ var M = {
                             status = '无效'
                         }
                         html.push('<li>'+
-                            '<a href="detail.html?guid='+ ele.guid +'">'+
+                            '<a href="javascript:void(0)" url="detail.html?guid='+ ele.guid +'">'+
                             '<span class="mny">红包总金额<i class="f-r">'+ ele.value + ' ETH</i></span>'+
                             '<span class="time">'+ ele.created_at + '<i class="f-r">(包含交易费0.698 ETH))</i></span>'+
                             '<span class="status">'+ status +'</span>'+
