@@ -1,7 +1,7 @@
 var M = {
     walletAddr: ''
     , contracts: {}
-    , path: 'http://blockchain.ijinshan.com/redpacket'
+    , path: 'https://blockchain.ijinshan.com/redpacket'
     , isLoadingRecord: false//是否还在请求
     , record :  null
     , isInDapp: function(){
