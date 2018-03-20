@@ -1,0 +1,628 @@
+var M = {
+    walletAddr: ''
+    , contracts: {}
+    , path: 'http://blockchain.ijinshan.com/redpacket'
+    , isInDapp: function(){
+        return (navigator.userAgent.indexOf('inDapp')>-1);
+    }
+    , isInIosDapp: function(){
+        return (navigator.userAgent.indexOf('inIosDapp')>-1);
+    }
+    , iosWalletAddress: function(str){
+        M.walletAddr = str;
+        // alert(M.walletAddr)
+    }
+    , getWalletAddr: function(){
+        // alert('getWalletAddress')
+        M.walletAddr = '0xf17f52151ebef6c7334fad080c5704d77216b732';
+        if(M.isInDapp()){
+            M.walletAddr = RedEnvelopeHost.getWalletAddress();
+        }else if(M.isInIosDapp()){
+            if($('body').hasClass('index')){
+                window.webkit.messageHandlers.h5Callback.postMessage({indexName:'address'});
+            }else{
+                window.webkit.messageHandlers.sofaWalletAddress.postMessage({indexName:'address'});
+            }
+        }
+    }
+    , isDownload: function(){
+        if(!M.isInDapp() && !M.isInIosDapp()){
+            var r = confirm("是否下载Dapp");
+            if(r){
+                location.href = 'https://www.cmcmbc.com/zh-cn/dapp-browser/';
+            }            
+            return false;
+        }
+    }
+    , jumpUrl: function(url){
+        if(M.isInDapp()){
+            if(url.indexOf('back')>-1){
+                RedEnvelopeHost.onBackToRedEnvelope();
+            }else{
+                RedEnvelopeHost.jumpToEnvelope(url);
+            }
+        }else if(M.isInIosDapp()){
+            if(url == 'back'){
+                window.webkit.messageHandlers.sofaH5Callback.postMessage({indexName: url});
+            }else{
+                window.webkit.messageHandlers.h5Callback.postMessage({indexName: url});
+            }
+        }
+    }
+    , shareImg: function(obj){
+        if(M.isInDapp()){
+            if(obj != ''){
+        alert('shareImg'+ JSON.stringify(obj))
+                RedEnvelopeHost.createEnvelopeShare(JSON.stringify(obj));
+            }else{
+                RedEnvelopeHost.createEnvelopeShare('');
+            }
+            
+        }else if(M.isInIosDapp()){
+            if(obj != ''){
+                window.webkit.messageHandlers.shareHongbao.postMessage({
+                    hongbaoCount:obj.count
+                    , ethCount: obj.playMoney
+                    , word: obj.word
+                    , invalidTime:obj.time
+                });
+            }else{
+                window.webkit.messageHandlers.h5Callback.postMessage({indexName:'share'});
+            }
+        }
+    }
+    , bind: function(){
+        $('.btn-send').click(function(){
+            M.isDownload();
+            M.jumpUrl('send.html');
+        })
+        $('.btn-snatch').click(function(){
+            M.isDownload();
+            M.jumpUrl('snatch.html');
+        })
+
+        $('.tip-record').click(function(){
+            M.isDownload();
+            M.jumpUrl('record.html');
+        })
+
+        $('.btn-generate').click(function(){
+            M.isDownload();
+            M.shareImg('');
+        })
+
+        $('.btn-return').click(function(){
+            M.jumpUrl('back');
+        })
+
+        $('.btn-confirm-pw').click(function(){
+            // alert('generate image');
+            var account = M.walletAddr
+                , word = $('.snatch input[name=command]').val()
+                , btn = $(this)
+                ;
+            if(btn.hasClass('disabled')){
+                return;
+            }
+            btn.addClass('disabled')
+
+            if($('input[name=command]').val() != ''){
+                $.ajax({
+                    type: "POST",
+                    url: M.path + "/snatch?word="+word+'&receiver='+account,
+                    dataType: "json",
+                    success: function(data){
+                        console.log(data)
+                        btn.removeClass('disabled')
+                        if(data.ret == 0){
+                            console.log('success')
+                            $('.pop-envelope').show();
+                            $('.pop-envelope .t span').html(word);
+                            $('.pop-envelope .pop-btn-open').attr('url', 'detail.html?word='+encodeURIComponent(word));
+
+                        }else if(data.ret == 10004){ //no such red packet
+                            M.showToast(data.msg);
+                        }else if(data.ret == 10005){//late
+                            $('.pop-envelope .view-detail').attr('url', 'detail.html?word='+encodeURIComponent(word));
+                            $('.pop-envelope').addClass('late').show();
+                        }else if(data.ret == 10003){
+                            // location.href = 'detail.html?word='+encodeURIComponent(word);
+                            
+                            M.jumpUrl('detail.html?word='+encodeURIComponent(word));
+                            // RedEnvelopeHost.jumpToEnvelope('detail.html?word='+encodeURIComponent(word));
+                        }else {
+                            M.showToast(data.msg)
+                        }
+
+                    }
+                });
+            }else{
+                btn.removeClass('disabled')
+
+            }
+        })
+
+
+        $('.pop-btn-open, .view-detail').click(function(){
+            M.jumpUrl($(this).attr('url'));
+        })
+        
+
+        $('.pop-close').click(function(){
+            // alert('generate image');
+            $('.pop-envelope').removeClass('late').hide();
+
+        })
+        if($('#iptMoney').length > 0){
+            // 1-500
+            document.getElementById('iptCount').addEventListener('input', function(e){
+                var v = e.target.value
+                    , max = 500
+                    , str = ''
+                    , isHasError = true
+                    ;
+                console.log(v)
+                if(v == 0){
+                    str = '调皮，至少发一个，请重新填写';
+                // }else if((v+'').length > 3){
+                    // $(this).val((v+'').substr(0, 3))
+                    // str = '最多只能发500个红包哦'
+                }else if(v > max){
+                    str = '最多只能发500个红包哦'
+                }else{
+                    str = '';
+                    isHasError = false;
+                }      
+                checkBtnStatus(str, isHasError, $(this));
+                isClick(isHasError);
+               
+            })
+        }
+       
+        if($('#iptMoney').length > 0){
+            // 0.001 -1000
+            document.getElementById('iptMoney').addEventListener('input', function(e){
+                var v = $(this).val()
+                    , str = ''
+                    , isHasError = false
+                    ;
+                if(v == 0){
+                    v = '0.000';
+                    isHasError = true;
+                }else if(v > 1000){
+                    str = '土豪，最多只能发1000eth哦，请重新填写';
+                    isHasError = true;
+                }
+                $('.money .big').html(v)
+                checkBtnStatus(str, isHasError, $(this));
+                isClick(isHasError);
+            })
+        }
+        
+
+        //6-20
+        if($('#iptCommand').length > 0){
+            document.getElementById('iptCommand').addEventListener('input', function(e){
+                var str = ''
+                if($(this).val()==''){
+                    isHasError = true;
+                }else if($(this).val().length > 20){
+                    str = '最长输入20个字符'
+                    isHasError = true;
+                }else if($(this).val().length < 6){
+                    isHasError = true;
+                    str = '最少输入6个字符'
+                }else{
+                    isHasError = false;
+                }
+                checkBtnStatus('', isHasError, $(this));
+                isClick(isHasError);
+
+            })
+        }
+            
+
+        function checkBtnStatus(str, isHasError, input){
+            if(str != ''){
+                M.showToast(str)
+                $('.btn').addClass('disabled');
+            }
+
+            console.log('status', isHasError)
+            if(isHasError){//is error
+                input.addClass('error')
+            }else{
+                input.removeClass('error')
+            }
+
+        }
+
+        function isClick(isAdd){
+            if(isAdd) {
+                $('.btn').addClass('disabled');
+            }else{
+                if($('input.error').length == 0){
+                    $('.btn').removeClass('disabled');
+                }
+            }
+            
+        }
+
+        
+    }
+    , sendEvent: function(instance, account){
+
+        $('.btn-send-envelution').click(function(){
+            var param = {}
+                , playMoney = $('.send input[name=eth]').val()
+                , word = $('.send input[name=command]').val()
+                , count = $('.send input[name=number]').val()
+                , gasLimit = 1
+                , gasPrice = '0.0001'
+                , checkParam = {}
+                , btn = $(this)
+                ;
+            if(playMoney == '' || word == '' || count == ''){
+                return;
+            }
+            if(btn.hasClass('disabled')){
+                return;
+            }
+            btn.addClass('disabled')
+            checkParam = {
+                value: playMoney
+                , word: word
+                , count: count
+            }
+            $.ajax({
+                type: "POST",
+                url: M.path + "/check",
+                data: checkParam ,
+                dataType: "json",
+                success: function(data){
+                    console.log(data)
+                    if(data.ret == 0){
+                        console.log('success')
+                        param = {
+                            value: playMoney
+                            , word: word
+                            , count: count
+                            , sender: account
+                            , gasCount: gasLimit
+                            , gasPrice: gasPrice
+                        }
+                        M.createPackage( instance, playMoney, function(r, data){
+                            console.log(r);
+                            console.log(data);
+
+                            if(r == 1){
+
+                                param.transaction_id = data.transactionHash;
+                                param.guid = data.randomHash;
+                                M.sendToBehide(param);
+                                M.shareImg({
+                                    count: count //红包个数
+                                    , money: playMoney //金额
+                                    , word: word //口令
+                                    , time: new Date()
+                                });
+                                // RedEnvelopeHost.createEnvelopeShare(JSON.stringify({
+                                //     count: count //红包个数
+                                //     , money: playMoney //金额
+                                //     , word: word //口令
+                                //     , time: new Date()
+                                // }));
+
+                                
+                                
+                            }else if(r == 0){
+                                // M.showToast(data.msg);
+
+                            }
+                            btn.removeClass('disabled');
+                        })
+                    }else{
+                        M.showToast(data.msg);
+                        btn.removeClass('disabled');
+                    }
+                }
+            });            
+
+        });
+
+    }
+
+    , showToast: function(str){
+        $('.toast').html(str).show();
+        setTimeout(function(){
+            $('.toast').hide().html('');
+        }, 2000)
+    }
+    , sendToBehide: function(param){
+        $.ajax({
+            type: "POST",
+            url: M.path + "/send",
+            data: param ,
+            dataType: "json",
+            success: function(data){
+                console.log(data)
+                if(data.ret == 0){
+                    console.log('success')
+                }else{
+                    // M.sendToBehide(param);
+                }
+            }
+        });
+    }
+    , initWeb3: function(callback){
+        if (typeof web3 !== 'undefined') {
+            M.web3Provider = web3.currentProvider;
+        } else {
+          // M.web3Provider = new Web3.providers.HttpProvider('http://10.60.119.45:7545');
+          M.web3Provider = new Web3.providers.HttpProvider('http://testethapi.ksmobile.net:8545');
+        }
+        web3 = new Web3(M.web3Provider);
+        $.getJSON('js/RedEnvelope.json?v=4', function(data) {
+            // 用Adoption.json数据创建一个可交互的TruffleContract合约实例。
+            var AdoptionArtifact = data;
+
+            M.contracts.Adoption = TruffleContract(AdoptionArtifact);
+            // Set the provider for our contract
+            M.contracts.Adoption.setProvider(M.web3Provider);
+
+            // M.contracts.Adoption.setNetwork(3)
+            M.contracts.Adoption.deployed().then(function(instance) {
+                // alert(888)
+                callback(instance, web3.eth.accounts[0])
+            }).then(function(result) {
+                // alert(9999)
+                  // return M.markAdopted();
+            }).catch(function(err) {
+                alert(err)
+                console.log(err.message);
+            });
+
+            // 获取用户账号
+            /*web3.eth.getAccounts(function(error, accounts) {
+                if (error) {
+                  console.log(error);
+                }
+             
+                 account = web3.eth.accounts[0];
+                
+                
+
+            });*/
+                  
+        });
+            
+    }
+    , createPackage: function( adoption, playMoney, callback ) {
+        var randomHash = web3.sha3( M.walletAddr+(new Date().getTime()));
+
+        adoption.createPackage.sendTransaction( randomHash, {from: M.walletAddr, value:web3.toWei(playMoney, 'ether')} )
+        .then(function(value) {
+
+            callback(1, {
+                randomHash: randomHash
+                , transactionHash: value
+            });
+
+          // var gasLimit,gasPrice;
+
+          // web3.eth.getTransaction(value, function(error, result){
+          //     if( result ){
+          //       gasLimit = result.gas;
+          //       gasPrice = web3.fromWei(result.gasPrice.toNumber(), 'ether');
+          //       console.log(gasLimit);
+          //       console.log(gasPrice);
+          //     }  
+          //     else{
+          //       console.log(error);
+          //     }
+          // })
+
+
+         
+          // window.timer = setInterval(function(){
+
+          //   web3.eth.getTransactionReceipt(value, function(error, result){
+          //       if( result ){
+          //         console.log(JSON.stringify(result));
+          //         clearInterval( timer );
+          //       }  
+          //       else{
+          //         console.log(error);
+          //       }
+          //   })
+            
+          // },2000);
+
+          
+          // callback( '1' ,value );
+        }).catch(function(e) {
+          callback(0 , e );
+          // console.log(e);
+        });
+
+    }
+    , sortList : function(list){
+        list.sort(function(x, y){
+            return (new Date(y.created_at)) - (new Date(x.created_at));
+        })
+        return list;
+
+    }
+    , getRecord: function(){
+        var param = {
+            offset: 0
+            , count : 20
+            , sender: M.walletAddr
+        }
+        // alert(M.walletAddr)
+        $.ajax({
+            type: "get",
+            url: M.path + "/list",
+            data: param ,
+            dataType: "json",
+            success: function(data){
+                console.log(data)
+                if(data.ret == 0){
+                    var html = [], status = '';
+                    if(data.data.length > 0 && $('body').hasClass('index')){
+                        $('.tip-box').addClass('show');
+                        return;
+                    }
+
+                    var list = M.sortList(data.data);
+
+
+                    $.each(data.data, function(i, ele){
+                        if(ele.status == 13){
+                            status = '过期'
+                        }else if(ele.status == 12){
+                            status = '已抢完'
+                        }else if(ele.status == 11){
+                            status = '抢红包中'
+                        }else if(ele.status == 10){
+                            status = '打款中'
+                        }else if(ele.status == 9){
+                            status = '确认失败'
+                        }else if(ele.status == 0){
+                            status = '无效'
+                        }
+                        html.push('<li>'+
+                            '<a href="detail.html?guid='+ ele.guid +'">'+
+                            '<span class="mny">红包总金额<i class="f-r">'+ ele.value + ' ETH</i></span>'+
+                            '<span class="time">'+ ele.created_at + '<i class="f-r">(包含交易费0.698 ETH))</i></span>'+
+                            '<span class="status">'+ status +'</span>'+
+                            '</a>'+'</li>');
+                    })
+                    $('.record-list').html(html.join(''))
+                    
+
+                }else{
+                    // M.sendToBehide(param);
+                }
+            }
+        });
+    }
+    , getDetail: function(){
+        var param = {
+            offset: 0
+            , count : 50
+            , word: M.getParameter('word')
+            , guid: M.getParameter('guid')
+        }
+        $.ajax({
+            type: "POST",
+            url: M.path + "/history",
+            data: param ,
+            dataType: "json",
+            success: function(data){
+                console.log(data)
+                if(data.ret == 0){
+                    var html = []
+                        , bestLuck = ''
+                        , me = ''
+                        , curVal = 0
+                        ;
+                    $('.head .addr').html(M.formatAddr(M.walletAddr));
+
+                    $('.head .sub').html('“'+ data.data.info.word +'”');
+                    html.push('<dt>已领取'+ data.data.records.length +'/'+ data.data.info.count +'个  共<span></span>/'+ data.data.info.total_value +'ETH</dt>');
+                    
+                    $.each(data.data.records, function(i, ele){
+                        if(data.data.records.length != 1 && ele.best_luck) {
+                            bestLuck = '<i class="icon-crown">手气最佳</i>';
+                        }else{
+                            bestLuck = ''
+                        }
+                        if(ele.receiver != M.walletAddr){
+                            me = '';
+                        }else{
+                            me = '<i class="me">(我)</i>';
+                        }
+                        if(ele.receiver == M.walletAddr){
+                            $('.head .money .big').html(ele.value.toFixed(4));
+                        }
+                        curVal += ele.value;
+                        html.push('<dd>'+
+                            '<img src="images/default.png ">'+
+                            '<div class="info">'+
+                            '<div class="addr">'+ me + M.formatAddr(ele.receiver) +'</div>'+
+                            '<div class="time">'+ ele.created_at +'</div>'+
+                            '</div>'+
+                            '<div class="money">'+
+                            '<span>'+ ele.value.toFixed(4) +' ETH</span>'+ bestLuck +
+                            '</div>'+
+                            '</dd>');
+                    })
+                    $('.list').html(html.join(''))
+                    $('.list dt span').html(curVal.toFixed(4))
+
+
+                    $('.btn-share').click(function(){
+                        M.shareImg({
+                            count: param.count //红包个数
+                            , money: data.data.info.total_value //金额
+                            , word: data.data.info.word //口令
+                            , time: new Date(data.expires_at)
+                        })
+                        // RedEnvelopeHost.createEnvelopeShare(JSON.stringify({
+                        //     count: count //红包个数
+                        //     , money: data.data.info.total_value //金额
+                        //     , word: data.data.info.word //口令
+                        //     , time: new Date(data.expires_at)
+                        // }));
+                    })
+        
+                    
+
+                }else{
+                    // M.sendToBehide(param);
+                    // M.showToast(data.msg)
+                }
+            }
+        });
+    }
+    , formatAddr: function(addr){
+        return addr.substr(0,8) + '...' + addr.substr(-8,8)
+
+    }
+    , getParameter: function(name) {  
+        var reg = new RegExp("(^|&)" + name + "=([^&]*)(&|$)", "i");  
+        var r = window.location.search.substr(1).match(reg);  
+
+        if (r != null)  
+            // console.log(r[2]);
+            return r[2];  
+        return null;  
+    }
+    
+    , init:function(){
+        
+        this.bind();
+        try{
+            this.getWalletAddr();
+        }catch(e){}
+
+        if($('body').hasClass('send')){
+            this.initWeb3(this.sendEvent);
+        }else if($('body').hasClass('record')){
+            this.getRecord();
+        }else if($('body').hasClass('snatch')){
+            // this.getDetail();
+        }else if($('body').hasClass('detail')){
+            this.getDetail();
+            
+        }else if($('body').hasClass('index')){
+            this.getRecord();
+        }
+       
+    }
+
+}
+$(function () { 
+    M.init();
+});
