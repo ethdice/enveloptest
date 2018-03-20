@@ -397,7 +397,7 @@ var M = {
            
             var AdoptionArtifact = data;
             
-
+            alert(33)
             //ios
             M.Contract = web3.eth.contract(AdoptionArtifact.abi).at("0x9796b2045affaad9f4a6cadfc86d49aa60c3738f");
             // var MyContract = web3.eth.contract(AdoptionArtifact.abi).at("0xfb0b8970a3f51b6ba30993e876fc3c3dfe8f87f2");
