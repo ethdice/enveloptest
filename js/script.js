@@ -1,7 +1,7 @@
 var M = {
     walletAddr: ''
     , contracts: {}
-    , path: 'https://blockchain.ijinshan.com/redpacket'
+    , path: 'http://blockchain.ijinshan.com/redpacket'
     , isLoadingRecord: false//是否还在请求
     , record :  null
     , isInDapp: function(){
@@ -336,6 +336,7 @@ var M = {
                 , word: word
                 , count: count
             }
+        // alert('create11')
             $.ajax({
                 type: "POST",
                 url: M.path + "/check",
@@ -353,7 +354,6 @@ var M = {
                             , gasCount: gasLimit
                             , gasPrice: gasPrice
                         }
-        alert('create1')
                         M.createPackage( contract, playMoney, function(r, data){
                             console.log(r);
                             console.log(data);
@@ -367,11 +367,10 @@ var M = {
                                     count: count //红包个数
                                     , money: playMoney //金额
                                     , word: word //口令
-                                    , time: new Date()
+                                    , time: new Date().getTime()
                                 });                                
                                 
                             }else if(r == 0){
-                                // M.showToast(data.msg);
 
                             }
                             btn.removeClass('disabled');
@@ -406,7 +405,7 @@ var M = {
             
             // alert(1)
             //ios
-            M.Contract = web3.eth.contract(AdoptionArtifact.abi).at("0x9796b2045affaad9f4a6cadfc86d49aa60c3738f");
+            M.Contract = web3.eth.contract(AdoptionArtifact.abi).at("0xfdb34844ef7e9f22fd351282c1ef85a557d19b67");
             // var MyContract = web3.eth.contract(AdoptionArtifact.abi).at("0xfb0b8970a3f51b6ba30993e876fc3c3dfe8f87f2");
             M.walletAddr = web3.eth.accounts[0];
             callback(M.Contract, M.walletAddr)
@@ -455,100 +454,26 @@ var M = {
     }
     , createPackage: function( contract, playMoney, callback ) {
         var randomHash = web3.sha3( M.walletAddr+(new Date().getTime()));
-        
-        // contract.createPackage.sendTransaction( randomHash, {from: web3.eth.accounts[0],value:web3.toWei(3, 'ether')}, function(r, data){
-        //     alert(r)
-        //     console.log(r)
-        //     console.log(data)
-
-        // })
-
-        alert(web3.toWei(0.1, 'ether'))
-        M.Contract.createPackage.sendTransaction( randomHash, {from: M.walletAddr,value:web3.toWei(0.1, 'ether')}, function(r, data){
-                alert(r)
-                console.log(r)
-                console.log(data)
-            })
-        // M.Contract.createPackage.sendTransaction(randomHash, {from: M.walletAddr,value:web3.toWei(playMoney+'', 'ether')}, function(r, data){
-        //     // console.log(r);
-        //     console.log(data);
-        //         if(data != undefined){
-        //             callback(1, {
-        //                 randomHash: randomHash
-        //                 , transactionHash: data
-        //             });
-        //         }else{
-        //             callback(0, {
-        //                 randomHash: randomHash
-        //                 , transactionHash: data
-        //             });
-        //         }
+       
+        M.Contract.createPackage.sendTransaction(randomHash, {from: M.walletAddr,value:web3.toWei(playMoney+'', 'ether')}, function(r, data){
+            // console.log(r);
+            console.log(data);
+                if(data != undefined){
+                    callback(1, {
+                        randomHash: randomHash
+                        , transactionHash: data
+                    });
+                }else{
+                    callback(0, {
+                        randomHash: randomHash
+                        , transactionHash: data
+                    });
+                }
                 
                
-        // })
+        })
 
-        // M.Contract.createPackage.sendTransaction(randomHash, {from: M.walletAddr,value:web3.toWei(playMoney, 'ether')})
-        // .then(function(value) {
-
-        //     callback(1, {
-        //         randomHash: randomHash
-        //         , transactionHash: value
-        //     });
-        // }).catch(function(e) {
-        //     callback(0 , e );
-        // });
-
-
-      /*  adoption.createPackage.sendTransaction( randomHash, {from: M.walletAddr, value:web3.toWei(playMoney, 'ether')}
-        //     , function(r, data){
-        //     console.log(r)
-        //     console.log(data)
-
-        // }
-        )
-        .then(function(value) {
-
-            // callback(1, {
-            //     randomHash: randomHash
-            //     , transactionHash: value
-            // });
-
-          // var gasLimit,gasPrice;
-
-          // web3.eth.getTransaction(value, function(error, result){
-          //     if( result ){
-          //       gasLimit = result.gas;
-          //       gasPrice = web3.fromWei(result.gasPrice.toNumber(), 'ether');
-          //       console.log(gasLimit);
-          //       console.log(gasPrice);
-          //     }  
-          //     else{
-          //       console.log(error);
-          //     }
-          // })
-
-
-         
-          // window.timer = setInterval(function(){
-
-          //   web3.eth.getTransactionReceipt(value, function(error, result){
-          //       if( result ){
-          //         console.log(JSON.stringify(result));
-          //         clearInterval( timer );
-          //       }  
-          //       else{
-          //         console.log(error);
-          //       }
-          //   })
-            
-          // },2000);
-
-          
-          // callback( '1' ,value );
-        }).catch(function(e) {
-          callback(0 , e );
-          // console.log(e);
-        });*/
+        
 
     }
     , sortList : function(list){
@@ -640,8 +565,16 @@ var M = {
                         , bestLuck = ''
                         , me = ''
                         , curVal = 0
+                        , senderAddr = ''//发红包本人addr
+                        , isSender = false//是否是发红包本人
+                        , isOver = false//是否抢完
                         ;
-                    $('.head .addr').html(M.formatAddr(M.walletAddr));
+
+                    $('.head .addr').html(M.formatAddr(senderAddr));
+                    // if(isSender){
+                    //     $('.head .addr').html(M.formatAddr(M.walletAddr));
+                    // }else{
+                    // }
 
                     $('.head .sub').html('“'+ data.data.info.word +'”');
                     html.push('<dt>已领取'+ data.data.records.length +'/'+ data.data.info.count +'个  共<span></span>/'+ data.data.info.total_value +'ETH</dt>');
@@ -681,14 +614,8 @@ var M = {
                             count: param.count //红包个数
                             , money: data.data.info.total_value //金额
                             , word: data.data.info.word //口令
-                            , time: new Date(data.expires_at)
+                            , time: new Date(data.expires_at*1000).getTime()
                         })
-                        // RedEnvelopeHost.createEnvelopeShare(JSON.stringify({
-                        //     count: count //红包个数
-                        //     , money: data.data.info.total_value //金额
-                        //     , word: data.data.info.word //口令
-                        //     , time: new Date(data.expires_at)
-                        // }));
                     })
         
                     
