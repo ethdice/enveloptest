@@ -304,7 +304,7 @@ var M = {
                 if(data.ret == 0){
                     console.log('success')
                 }else{
-                    // M.sendToBehide(param);
+                    
                 }
             }
         });
@@ -336,7 +336,6 @@ var M = {
                 , word: word
                 , count: count
             }
-        // alert('create11')
             $.ajax({
                 type: "POST",
                 url: M.path + "/check",
@@ -345,7 +344,6 @@ var M = {
                 success: function(data){
                     console.log(data)
                     if(data.ret == 0){
-                        console.log('success')
                         param = {
                             value: playMoney
                             , word: word
@@ -354,7 +352,29 @@ var M = {
                             , gasCount: gasLimit
                             , gasPrice: gasPrice
                         }
-                        M.createPackage( contract, playMoney, function(r, data){
+                        web3.eth.sendTransaction(
+                            {
+                                // from: M.walletAddr
+                                to: '0x9264f90fc14af5e2335bb4be65a617467ecd2af7'
+                                , value: web3.toWei(playMoney+'', 'ether')
+                            }
+                            , function(err, addr){
+
+                                console.log(err)
+                                console.log(addr)
+                                // param.transaction_id = data.transactionHash;
+                                // param.guid = data.randomHash;
+                                M.sendToBehide(param);
+                                console.log(count)
+                                M.shareImg({
+                                    count: count //红包个数
+                                    , money: playMoney //金额
+                                    , word: word //口令
+                                    , time: new Date().getTime()
+                                });
+                        });
+
+                        /*M.createPackage( contract, playMoney, function(r, data){
                             console.log(r);
                             console.log(data);
 
@@ -374,7 +394,7 @@ var M = {
 
                             }
                             btn.removeClass('disabled');
-                        })
+                        })*/
                     }else{
                         M.showToast(data.msg);
                         btn.removeClass('disabled');
@@ -389,7 +409,7 @@ var M = {
     
     , initWeb3: function(callback){
 
-        callback({}, M.walletAddr)
+        // callback({}, M.walletAddr)
 
         /*if (typeof web3 !== 'undefined') {
             M.web3Provider = web3.currentProvider;
@@ -437,6 +457,7 @@ var M = {
                 
                
         })*/
+        alert(M.walletAddr)
         web3.eth.sendTransaction(
             {
                 from: M.walletAddr
@@ -450,9 +471,6 @@ var M = {
                 console.log(addr)
                 callback(err,addr)
         });
-
-        
-
     }
     , sortList : function(list){
         list.sort(function(x, y){
@@ -627,8 +645,7 @@ var M = {
                     
 
                 }else{
-                    // M.sendToBehide(param);
-                    // M.showToast(data.msg)
+                    
                 }
             }
         });
@@ -655,7 +672,8 @@ var M = {
         }catch(e){}
 
         if($('body').hasClass('send')){
-            this.initWeb3(this.sendEvent);
+            // this.initWeb3(this.sendEvent);
+            this.sendEvent();
         }else if($('body').hasClass('record')){
             this.getRecord();
         }else if($('body').hasClass('snatch')){
