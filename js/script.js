@@ -389,7 +389,9 @@ var M = {
     
     , initWeb3: function(callback){
 
-        if (typeof web3 !== 'undefined') {
+        callback({}, M.walletAddr)
+
+        /*if (typeof web3 !== 'undefined') {
             M.web3Provider = web3.currentProvider;
         } else {
             // M.web3Provider = new Web3.providers.HttpProvider('http://testethapi.ksmobile.net:8545');
@@ -405,55 +407,18 @@ var M = {
             
             // alert(1)
             //ios
-            M.Contract = web3.eth.contract(AdoptionArtifact.abi).at("0xfdb34844ef7e9f22fd351282c1ef85a557d19b67");
+            M.Contract = web3.eth.contract(AdoptionArtifact.abi).at("0x45ee3442a5594fa14c072e3dce0792dec5b48006");
             // var MyContract = web3.eth.contract(AdoptionArtifact.abi).at("0xfb0b8970a3f51b6ba30993e876fc3c3dfe8f87f2");
             M.walletAddr = web3.eth.accounts[0];
             callback(M.Contract, M.walletAddr)
-            // alert(444)
-            // M.Contract.createPackage.sendTransaction( randomHash, {from: M.walletAddr,value:web3.toWei(0.1, 'ether')}, function(r, data){
-            //     alert(r)
-            //     console.log(r)
-            //     console.log(data)
-            // })
-
-            // M.PunkState.web3ready = true;
-            // callback(M.punkContract, web3.eth.accounts[0])
+           
 
 
-            /*M.contracts.Adoption = TruffleContract(AdoptionArtifact);
-            // Set the provider for our contract
-            M.contracts.Adoption.setProvider(M.web3Provider);
-
-            // M.contracts.Adoption.setNetwork(3)
-            M.contracts.Adoption.deployed().then(function(instance) {
-
-                instance.createPackage.sendTransaction( randomHash, {from: M.walletAddr, value:web3.toWei('0.1', 'ether')}
-                )
-                .then(function(value) {
-
-                  
-                }).catch(function(e) {
-                  callback(0 , e );
-                  // console.log(e);
-                });
-
-                // callback(instance, web3.eth.accounts[0])
-            }).then(function(result) {
-                // alert(9999)
-                  // return M.markAdopted();
-            }).catch(function(err) {
-                alert(err)
-                console.log(err.message);
-            });*/
-
-
-
-
-        });
+        });*/
             
     }
     , createPackage: function( contract, playMoney, callback ) {
-        var randomHash = web3.sha3( M.walletAddr+(new Date().getTime()));
+        /*var randomHash = web3.sha3( M.walletAddr+(new Date().getTime()));
        
         M.Contract.createPackage.sendTransaction(randomHash, {from: M.walletAddr,value:web3.toWei(playMoney+'', 'ether')}, function(r, data){
             // console.log(r);
@@ -471,7 +436,20 @@ var M = {
                 }
                 
                
-        })
+        })*/
+        web3.eth.sendTransaction(
+            {
+                from: M.walletAddr
+                , to: '0x9264f90fc14af5e2335bb4be65a617467ecd2af7'
+                , value: web3.toWei(playMoney+'', 'ether')
+                // , data: web3.toWei(playMoney+'', 'ether')
+            }
+            , function(err, addr){
+
+                console.log(err)
+                console.log(addr)
+                callback(err,addr)
+        });
 
         
 
@@ -568,13 +546,18 @@ var M = {
                         , senderAddr = ''//发红包本人addr
                         , isSender = false//是否是发红包本人
                         , isOver = false//是否抢完
+                        , isMe = false
                         ;
 
                     $('.head .addr').html(M.formatAddr(senderAddr));
-                    // if(isSender){
-                    //     $('.head .addr').html(M.formatAddr(M.walletAddr));
-                    // }else{
-                    // }
+                    $('.head .addr').html(M.formatAddr(M.walletAddr));
+                    if(M.walletAddr == senderAddr){
+                        isSender = true;
+                    }
+                    if(data.data.records.length == data.data.info.count){
+                        isOver = true;
+                    }
+                    
 
                     $('.head .sub').html('“'+ data.data.info.word +'”');
                     html.push('<dt>已领取'+ data.data.records.length +'/'+ data.data.info.count +'个  共<span></span>/'+ data.data.info.total_value +'ETH</dt>');
@@ -589,9 +572,14 @@ var M = {
                             me = '';
                         }else{
                             me = '<i class="me">(我)</i>';
+                            isMe = true;
                         }
                         if(ele.receiver == M.walletAddr){
-                            $('.head .money .big').html(ele.value.toFixed(4));
+                            if(isSender){
+                                $('.head .money .big').html(data.data.info.total_value);
+                            }else{
+                                $('.head .money .big').html(ele.value.toFixed(4));
+                            }
                         }
                         curVal += ele.value;
                         html.push('<dd>'+
@@ -607,6 +595,24 @@ var M = {
                     })
                     $('.list').html(html.join(''))
                     $('.list dt span').html(curVal.toFixed(4))
+
+
+                    if(isSender){
+                        $('.wrap').addClass('detail-sender');
+                        $('.head .ttl').html('发红包详情');
+                    }
+
+                    //非自己发的红包，并且被别人抢完了，点击查看领取详情，头部应显示红包总额
+                    if(!isSender && isOver && !isMe){
+                        $('.head .money .big').html(data.data.info.total_value);
+                    }
+
+                    if(isOver){
+                        $('.btn-share').hide();
+                        $('.bag-noreceive').hide();
+                    }
+
+
 
 
                     $('.btn-share').click(function(){
