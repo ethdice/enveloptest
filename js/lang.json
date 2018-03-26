@@ -6,6 +6,23 @@
         , "send":{
             "msg1": "The network fee has raised and the remaining network gas is no sufficient"
             , "msg2": "This password has already been used. Please try another."
+            , "msg3": "Up to 1,000 ETH"
+            , "msg4": "Up to 500"
+            , "msg5": "Please only use Chinese/English characters or numbers"
+            , "msg6": "Password must be at least 6 characters long"
+            , "msg7": "Password must not exceed 20 characters"
+            , "msg8": "Please make sure each packets' minimum amount is 0.0001 ETH or more"
+            , "title": "Send Red Packet"
+            , "money": "Total"
+            , "moneyDes": "Random amount"
+            , "count": "Quantity"
+            , "countPlh": "Enter amount"
+            , "countUnit": ""
+            , "commandPlh": "6-20 characters or numbers"
+            , "commandDes": "A password is required to open red packets"
+            , "btn": "PREPARE RED PACKET"
+            , "tip": "Red packets that are not opened within 24 hours will be refunded"
+            , "countDes": "Gas fee needed for grabbing packet"
         }
         , "other": {
             "noNetwork": "No internet connection"
@@ -21,6 +38,24 @@
         , "send":{
             "msg1": "由于交易费上涨，使预留的交易费不足以支付抢红包"
             , "msg2": "这个口令已经被使用，换一个吧"
+            , "msg3": "最多输入1000 ETH"
+            , "msg4": "最多发送500个"
+            , "msg5": "只能输入中文，英文和数字"
+            , "msg6": "最少输入6个字"
+            , "msg7": "最多输入20字"
+            , "msg8": "一个红包最小金额0.0001 ETH"
+            , "title": "发红包"
+            , "money": "总金额"
+            , "moneyDes": "金额将随机分配"
+            , "count": "红包数"
+            , "countPlh": "填写个数"
+            , "countUnit": "个"
+            , "commandPlh": "6-20字的中文，英文或数字"
+            , "commandDes": "抢红包必须输入以上口令"
+            , "btn": "塞币进红包"
+            , "tip": "未领取的红包将于24小时后发起退款"
+            , "countDes": "部分将用来支付抢红包交易费"
+
         }
         , "other": {
             "noNetwork": "没有网路连线"
@@ -36,6 +71,24 @@
         , "send": {
             "msg1": "由於交易費上漲，使預留的交易費不足以支付搶紅包"
             , "msg2": "這個口令已經被使用，換一個吧"
+            , "msg3": "最多輸入1000 ETH"
+            , "msg4": "最多發送500個"
+            , "msg5": "只能輸入中文、英文和數字"
+            , "msg6": "最少輸入6個字"
+            , "msg7": "最多輸入20字"
+            , "msg8": "一個紅包最小金額0.0001 ETH"
+            , "title": "發紅包"
+            , "money": "總金額"
+            , "moneyDes": "金額將隨機分配"
+            , "count": "紅包數"
+            , "countPlh": "填寫個數"
+            , "countUnit": "個"
+            , "commandPlh": "6-20字的中文、英文或數字"
+            , "commandDes": "搶紅包必須輸入以上口令"
+            , "btn": "塞幣進紅包"
+            , "tip": "未領取的紅包將於24小時後發起退款"
+            , "countDes": "部分將用來支付搶紅包交易費"
+
         }
         , "other": {
             "noNetwork": "沒有網路連線"

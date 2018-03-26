@@ -4,7 +4,7 @@
     <meta charset="UTF-8"/>
     <meta http-equiv="pragma" content="no-cache">
     <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"> 
-    <title>发红包</title>
+    <title></title>
     <link rel="Shortcut Icon" href="images/favicon.ico">
     <link rel="stylesheet" type="text/css" href="css/style.min.css?v=201801358">
 </head>
@@ -14,24 +14,25 @@
 
 	<div class="return-box">
 		<a class="btn-return" href="javascript:void(0)"></a>
-		<div class="ttl">发红包</div>
+		<div class="ttl"></div>
 	</div>
 	<label>
-		<div class="ipt-box"><span class="ipt-l">总金额</span><input id="iptMoney" class="error" type="number" style="ime-mode:disabled" name="eth" value="" placeholder="0.000" oninput="value=/^\d+\.?\d{0,3}$/.test(value) ? value : value.split('.')[1].length<=3? value:value=value.split('.')[0]+'.'+value.split('.')[1].substr(0,3)" /><span class="ipt-r">ETH</span></div>
-		<div class="ipt-tip">金额将随机分配</div>
+		<div class="ipt-box"><span class="ipt-l"></span><input id="iptMoney" class="error" type="number" style="ime-mode:disabled" name="eth" value="" placeholder="0.000" oninput="value=/^\d+\.?\d{0,3}$/.test(value) ? value : value.split('.')[1].length<=3? value:value=value.split('.')[0]+'.'+value.split('.')[1].substr(0,3)" /><span class="ipt-r">ETH</span></div>
+		<div class="ipt-tip"></div>
 	</label>
 	<label>
-		<div class="ipt-box"><span class="ipt-l">红包数</span><input id="iptCount" type="number" name="number" value="" class="error" placeholder="填写个数" oninput="value=value.replace(/\D/g,'')"  /><span class="ipt-r">个</span></div>
+		<div class="ipt-box"><span class="ipt-l">红包数</span><input id="iptCount" type="number" name="number" value="" class="error" placeholder="" oninput="value=value.replace(/\D/g,'')"  /><span class="ipt-r">个</span></div>
+		<div class="ipt-tip"></div>
 	</label>
 	<label>
-		<div class="ipt-box"><input type="text" name="command" id="iptCommand" value="" placeholder="总字符需大于6且小于20" class="error" /></div>
-		<div class="ipt-tip">领取红包必须输入以上口令,总字符需大于6且小于20</div>
+		<div class="ipt-box"><input type="text" name="command" id="iptCommand" value="" placeholder="" class="error" /></div>
+		<div class="ipt-tip"></div>
 	</label>
 
 	<div class="money"><span class="big">0.000</span>ETH</div>
 
-	<a href="javascript:void(0)" class="btn btn-send-envelution disabled">塞钱进红包</a>
-	<div class="after-tip">未领取的红包将于24小时后发起退款</div>
+	<a href="javascript:void(0)" class="btn btn-send-envelution disabled"></a>
+	<div class="after-tip"></div>
 
 </div>
 <div class="toast"></div>

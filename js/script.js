@@ -196,9 +196,7 @@ var M = {
                     btn.removeClass('disabled')
 
                     if(data.ret == 0){
-
-                        location.href = 'detail.html?word='+encodeURIComponent(word);
-
+                        M.jumpUrl('detail.html?word='+encodeURIComponent(word));
                     }else if(data.ret == 10004){ //no such red packet
                         M.showToast(data.msg);
                     }else if(data.ret == 10005){//late
@@ -231,7 +229,7 @@ var M = {
             $('.pop-envelope').removeClass('late').hide();
 
         })
-        if($('#iptMoney').length > 0){
+        if($('#iptCount').length > 0){
             // 1-500
             document.getElementById('iptCount').addEventListener('input', function(e){
                 var v = e.target.value
@@ -239,7 +237,6 @@ var M = {
                     , str = ''
                     , isHasError = true
                     ;
-                console.log(v)
                 if(v == 0){
                     // str = '调皮，至少发一个，请重新填写';
                     str = '';
@@ -247,7 +244,7 @@ var M = {
                     // $(this).val((v+'').substr(0, 3))
                     // str = '最多只能发500个红包哦'
                 }else if(v > max){
-                    str = '最多只能发500个红包哦'
+                    str = M.lang[M.curLang]['send']['msg4'];
                 }else{
                     str = '';
                     isHasError = false;
@@ -269,7 +266,7 @@ var M = {
                     v = '0.000';
                     isHasError = true;
                 }else if(v > 1000){
-                    str = '土豪，最多只能发1000eth哦，请重新填写';
+                    str = M.lang[M.curLang]['send']['msg8'];
                     isHasError = true;
                 }
                 $('.money .big').html(v)
@@ -286,11 +283,15 @@ var M = {
                 if($(this).val()==''){
                     isHasError = true;
                 }else if($(this).val().length > 20){
-                    str = '最长输入20个字符'
+                    str = M.lang[M.curLang]['send']['msg7'];
                     isHasError = true;
                 }else if($(this).val().length < 6){
-                    isHasError = true;
-                    str = '最少输入6个字符'
+                    if($(this).hasClass('hasClicked')){
+                        isHasError = true;
+                        // str = '最少输入6个字符'
+                    }else{
+                        isHasError = false;
+                    }
                 }else{
                     isHasError = false;
                 }
@@ -309,9 +310,9 @@ var M = {
 
             if(isHasError){//is error
                 input.addClass('error');
-                if(str != ''){
+                // if(str != ''){
                     input.parent().addClass('error');
-                }
+                // }
             }else{
                 input.removeClass('error');
                 input.parent().removeClass('error');
@@ -397,9 +398,12 @@ var M = {
             if(playMoney == '' || word == '' || count == ''){
                 return;
             }
-            // if(word.length < 6){
-            //     $('input[name="word"]').parent().addClass('error');
-            // }
+            if(word.length < 6){
+                $('input[name="command"]').parent().addClass('error');
+                $('input[name="command"]').addClass('hasClicked');
+                M.showToast(M.lang[M.curLang]['send']['msg6'])
+                return;
+            }
             if(btn.hasClass('disabled')){
                 return;
             }
@@ -436,7 +440,7 @@ var M = {
                             M.web3Provider = web3.currentProvider;
                             web3.eth.sendTransaction(
                                 {
-                                    // from: M.walletAddr, 
+                                    from: M.walletAddr, 
                                     to: '0x9264f90fc14af5e2335bb4be65a617467ecd2af7'
                                     , value: web3.toWei(playMoney+'', 'ether')
                                 }
@@ -445,7 +449,7 @@ var M = {
                                     if(addr != undefined){
                                         
                                         $('.loading').show();
-                                        $('.toast').html('正在生成分享图，请稍等...').show();
+                                        // $('.toast').html('正在生成分享图，请稍等...').show();
 
                                         param.guid = web3.sha3( M.walletAddr+(new Date().getTime()));
                                         param.transaction_id = addr;
@@ -643,7 +647,13 @@ var M = {
             }
         });
     }
+    , getEnvelop: function(){
+
+    }
     , getDetail: function(){
+
+
+
         var param = {
             offset: 0
             , count : 50
@@ -764,6 +774,26 @@ var M = {
             return r[2];  
         return null;  
     }
+
+    , initSend: function(){
+        // M.curLang = 'tw';
+        document.title = M.lang[M.curLang]['send']['title'];
+        // console.log(document.title)
+        $('.ttl').html(M.lang[M.curLang]['send']['title']);
+        
+        $('#iptMoney').siblings('.ipt-l').html(M.lang[M.curLang]['send']['money']);
+        $('#iptMoney').parents('label').find('.ipt-tip').html(M.lang[M.curLang]['send']['moneyDes']);
+        
+        $('#iptCount').siblings('.ipt-l').html(M.lang[M.curLang]['send']['count']);
+        $('#iptCount').siblings('.ipt-r').html(M.lang[M.curLang]['send']['countUnit']);
+        $('#iptCount').attr('placeholder', M.lang[M.curLang]['send']['countPlh']);
+        $('#iptCount').parents('label').find('.ipt-tip').html(M.lang[M.curLang]['send']['countDes']);
+        
+        $('#iptCommand').attr('placeholder', M.lang[M.curLang]['send']['commandPlh']);
+        $('#iptCommand').parents('label').find('.ipt-tip').html(M.lang[M.curLang]['send']['commandDes']);
+        $('.btn-send-envelution').html(M.lang[M.curLang]['send']['btn']);
+        $('.after-tip').html(M.lang[M.curLang]['send']['tip']);
+    }
     
     , init:function(){
 
@@ -778,7 +808,6 @@ var M = {
 
         $.getJSON('js/lang.json', function(data) {
             M.lang = data;
-
             M.bind();
             try{
                 M.getWalletAddr();
@@ -786,6 +815,7 @@ var M = {
 
             if($('body').hasClass('send')){
                 // M.initWeb3(M.sendEvent);
+                M.initSend();
                 M.sendEvent();
             }else if($('body').hasClass('record')){
                 M.getRecord();
@@ -793,12 +823,9 @@ var M = {
                 // M.getDetail();
             }else if($('body').hasClass('detail')){
                 M.getDetail();
-                
             }else if($('body').hasClass('index')){
                 M.getRecord();
-            }
-            console.log(M.lang)
-            
+            }            
         })
 
 
@@ -811,23 +838,5 @@ var M = {
 
 }
 $(function () { 
-
-    /*$.ajax({
-        url: 'js/lang.json'
-        , type: 'get'
-        , dataType: 'json'
-        , success: function(data){
-            console.log(data)
-
-        }
-        , error: function(data){
-            console.log(data)
-
-        }
-    })*/
-
-    // $.getJSON('js/lang.json', function(data){
-    //     console.log(data)
-    // })
     M.init();
 });
