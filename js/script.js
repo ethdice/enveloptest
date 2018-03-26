@@ -1,9 +1,12 @@
 var M = {
     walletAddr: ''
     , contracts: {}
-    , path: 'https://blockchain.ijinshan.com/redpacket'
+    , path: 'http://blockchain.ijinshan.com/redpacket'
     , isLoadingRecord: false//是否还在请求
     , record :  null
+    , timerToast: null
+    , curLang: 'zh'
+    , lang: {}
     , isInDapp: function(){
         return (navigator.userAgent.indexOf('inDapp')>-1);
     }
@@ -16,7 +19,8 @@ var M = {
     }
     , getWalletAddr: function(){
         // alert('getWalletAddress')
-        M.walletAddr = '0xf17f52151ebef6c7334fad080c5704d77216b732';
+        M.walletAddr = '0x7fec28c6c1dd271830c8f2ba77dd15f987bbd329';
+        M.walletAddr = '0xf858f42b162bb1ef0c5d99b32b28f3b00b124170';
         if(M.isInDapp()){
             M.walletAddr = RedEnvelopeHost.getWalletAddress();
         }else if(M.isInIosDapp()){
@@ -37,6 +41,11 @@ var M = {
         }
     }
     , jumpUrl: function(url){
+        if(!M.isHasNetwork()){
+        // alert(M.lang[M.curLang]['other']['noNetwork'])
+            M.showToast(M.lang[M.curLang]['other']['noNetwork'])
+            return;
+        }
         if(M.isInDapp()){
             if(url.indexOf('back')>-1){
                 RedEnvelopeHost.onBackToRedEnvelope();
@@ -52,9 +61,12 @@ var M = {
         }
     }
     , shareImg: function(obj){
+        if(!M.isHasNetwork()){
+            M.showToast(M.lang[M.curLang]['other']['noNetwork'])
+            return;
+        }
         if(M.isInDapp()){
             if(obj != ''){
-                alert('shareImg'+ JSON.stringify(obj))
                 RedEnvelopeHost.createEnvelopeShare(JSON.stringify(obj));
             }else{
                 RedEnvelopeHost.createEnvelopeShare('');
@@ -73,6 +85,22 @@ var M = {
                 window.webkit.messageHandlers.h5Callback.postMessage({indexName:'share'});
             }
         }
+    }
+    , getLang: function(){
+         if(M.isInDapp()){
+            return RedEnvelopeHost.getMobileLanguage();
+        }else if(M.isInIosDapp()){
+            return 'zh';
+        }
+        return 'zh';
+    }
+    , isHasNetwork: function(){
+        if(M.isInDapp()){
+            return RedEnvelopeHost.isMobileNetAvailable();
+        }else if(M.isInIosDapp()){
+            return true;
+        }
+        return true;
     }
     , bind: function(){
 
@@ -110,36 +138,41 @@ var M = {
             }
             btn.addClass('disabled')
 
+            if(!M.isHasNetwork()){
+                M.showToast(M.lang[M.curLang]['other']['noNetwork'])
+                return;
+            }
+
             if($('input[name=command]').val() != ''){
+                $('.loading').show();
                 $.ajax({
                     type: "POST",
-                    url: M.path + "/snatch?word="+word+'&receiver='+account,
+                    url: M.path + "/checkWord?word="+word+'&receiver='+account,
                     dataType: "json",
                     success: function(data){
                         console.log(data)
                         btn.removeClass('disabled')
+                        $('.loading').hide();
                         if(data.ret == 0){
-                            console.log('success')
                             $('.pop-envelope').show();
                             $('.pop-envelope .t span').html(word);
-                            $('.pop-envelope .pop-btn-open').attr('url', 'detail.html?word='+encodeURIComponent(word));
+                            // $('.pop-envelope .pop-btn-open').attr('url', 'detail.html?word='+encodeURIComponent(word));
 
                         }else if(data.ret == 10004){ //no such red packet
                             M.showToast(data.msg);
                         }else if(data.ret == 10005){//late
                             $('.pop-envelope .view-detail').attr('url', 'detail.html?word='+encodeURIComponent(word));
                             $('.pop-envelope').addClass('late').show();
-                        }else if(data.ret == 10003){
-                            // location.href = 'detail.html?word='+encodeURIComponent(word);
-                            
+                        }else if(data.ret == 10003){                            
                             M.jumpUrl('detail.html?word='+encodeURIComponent(word));
-                            // RedEnvelopeHost.jumpToEnvelope('detail.html?word='+encodeURIComponent(word));
                         }else {
                             M.showToast(data.msg)
                         }
 
                     }
                 });
+
+                
             }else{
                 btn.removeClass('disabled')
 
@@ -147,7 +180,44 @@ var M = {
         })
 
 
-        $('.pop-btn-open, .view-detail').click(function(){
+        $('.pop-btn-open').click(function(){
+            var account = M.walletAddr
+                , word = $('.snatch input[name=command]').val()
+                , btn = $(this)
+                ;
+            btn.addClass('disabled')
+            $.ajax({
+                type: "POST",
+                url: M.path + "/snatch?word="+word+'&receiver='+account,
+                dataType: "json",
+                success: function(data){
+                    
+                    console.log(data)
+                    btn.removeClass('disabled')
+
+                    if(data.ret == 0){
+
+                        location.href = 'detail.html?word='+encodeURIComponent(word);
+
+                    }else if(data.ret == 10004){ //no such red packet
+                        M.showToast(data.msg);
+                    }else if(data.ret == 10005){//late
+                        $('.pop-envelope .view-detail').attr('url', 'detail.html?word='+encodeURIComponent(word));
+                        $('.pop-envelope').addClass('late').show();
+                    }else if(data.ret == 10003){
+                        // location.href = 'detail.html?word='+encodeURIComponent(word);
+                        
+                        M.jumpUrl('detail.html?word='+encodeURIComponent(word));
+                        // RedEnvelopeHost.jumpToEnvelope('detail.html?word='+encodeURIComponent(word));
+                    }else {
+                        M.showToast(data.msg)
+                    }
+
+                }
+            });
+        })
+
+        $('.view-detail').click(function(){
             M.jumpUrl($(this).attr('url'));
         })
 
@@ -265,8 +335,6 @@ var M = {
                 M.scrollLoad();
             });
         }
-
-        
     }
     , bottomDistance: function() {
         var pageHeight = Math.max(document.body.scrollHeight, document.body.offsetHeight);
@@ -286,10 +354,15 @@ var M = {
 
     , showToast: function(str){
         if(str != ''){
-            $('.toast').html(str).show();
-            setTimeout(function(){
-                $('.toast').hide().html('');
-            }, 2000)
+            if(null == M.timerToast){
+                $('.toast').html(str).show();
+                M.timerToast = setTimeout(function(){
+                    $('.toast').hide().html('');
+                    clearTimeout(M.timerToast); 
+                    M.timerToast = null;
+                }, 2000)
+            }
+            
         }
         
     }
@@ -336,6 +409,13 @@ var M = {
                 , word: word
                 , count: count
             }
+
+            if(!M.isHasNetwork()){
+                M.showToast(M.lang[M.curLang]['other']['noNetwork'])
+                return;
+            }
+
+            alert('send6')
             $.ajax({
                 type: "POST",
                 url: M.path + "/check",
@@ -352,29 +432,43 @@ var M = {
                             , gasCount: gasLimit
                             , gasPrice: gasPrice
                         }
-                        web3.eth.sendTransaction(
-                            {
-                                // from: M.walletAddr
-                                to: '0x9264f90fc14af5e2335bb4be65a617467ecd2af7'
-                                , value: web3.toWei(playMoney+'', 'ether')
-                            }
-                            , function(err, addr){
+                        if (typeof web3 !== 'undefined') {
+                            M.web3Provider = web3.currentProvider;
+                            web3.eth.sendTransaction(
+                                {
+                                    // from: M.walletAddr, 
+                                    to: '0x9264f90fc14af5e2335bb4be65a617467ecd2af7'
+                                    , value: web3.toWei(playMoney+'', 'ether')
+                                }
+                                , function(err, addr){
+                                    console.log(addr)
+                                    if(addr != undefined){
+                                        
+                                        $('.loading').show();
+                                        $('.toast').html('正在生成分享图，请稍等...').show();
 
-                                console.log(err)
-                                console.log(addr)
-                                // param.transaction_id = data.transactionHash;
-                                // param.guid = data.randomHash;
-                                M.sendToBehide(param);
-                                console.log(count)
-                                M.shareImg({
-                                    count: count //红包个数
-                                    , money: playMoney //金额
-                                    , word: word //口令
-                                    , time: new Date().getTime()
-                                });
-                        });
+                                        param.guid = web3.sha3( M.walletAddr+(new Date().getTime()));
+                                        param.transaction_id = addr;
+                                        param.sender = M.walletAddr;
 
-                        /*M.createPackage( contract, playMoney, function(r, data){
+                                        M.sendToBehide(param);
+
+                                        M.shareImg({
+                                            count: count //红包个数
+                                            , money: playMoney //金额
+                                            , word: word //口令
+                                            , time: new Date().getTime()
+                                        });                                        
+                                    }
+                            });
+                        }
+                        
+                        
+
+                       /* 
+                        // console.log(web3)
+                        // web3 = new Web3(M.web3Provider);
+                        M.createPackage( contract, playMoney, function(r, data){
                             console.log(r);
                             console.log(data);
 
@@ -396,9 +490,18 @@ var M = {
                             btn.removeClass('disabled');
                         })*/
                     }else{
-                        M.showToast(data.msg);
+                        var msg = data.msg;
+                        if(data.ret == 10002){
+                            msg = M.lang[M.curLang]['send']['msg1'];
+                        }else if(data.ret == 10003){
+                            msg = M.lang[M.curLang]['send']['msg2'];
+                        }
+                        M.showToast(msg);
                         btn.removeClass('disabled');
                     }
+                },
+                error:function(e){
+                    alert(e)
                 }
             });            
 
@@ -409,9 +512,8 @@ var M = {
     
     , initWeb3: function(callback){
 
-        // callback({}, M.walletAddr)
-
-        /*if (typeof web3 !== 'undefined') {
+        alert('init')
+        if (typeof web3 !== 'undefined') {
             M.web3Provider = web3.currentProvider;
         } else {
             // M.web3Provider = new Web3.providers.HttpProvider('http://testethapi.ksmobile.net:8545');
@@ -434,12 +536,12 @@ var M = {
            
 
 
-        });*/
+        });
             
     }
     , createPackage: function( contract, playMoney, callback ) {
-        /*var randomHash = web3.sha3( M.walletAddr+(new Date().getTime()));
-       
+        var randomHash = web3.sha3( M.walletAddr+(new Date().getTime()));
+        alert(33333333333)
         M.Contract.createPackage.sendTransaction(randomHash, {from: M.walletAddr,value:web3.toWei(playMoney+'', 'ether')}, function(r, data){
             // console.log(r);
             console.log(data);
@@ -456,21 +558,21 @@ var M = {
                 }
                 
                
-        })*/
-        alert(M.walletAddr)
-        web3.eth.sendTransaction(
-            {
-                from: M.walletAddr
-                , to: '0x9264f90fc14af5e2335bb4be65a617467ecd2af7'
-                , value: web3.toWei(playMoney+'', 'ether')
-                // , data: web3.toWei(playMoney+'', 'ether')
-            }
-            , function(err, addr){
+        })
+        // alert(M.walletAddr)
+        // web3.eth.sendTransaction(
+        //     {
+        //         from: M.walletAddr
+        //         , to: '0x9264f90fc14af5e2335bb4be65a617467ecd2af7'
+        //         , value: web3.toWei(playMoney+'', 'ether')
+        //         // , data: web3.toWei(playMoney+'', 'ether')
+        //     }
+        //     , function(err, addr){
 
-                console.log(err)
-                console.log(addr)
-                callback(err,addr)
-        });
+        //         console.log(err)
+        //         console.log(addr)
+        //         callback(err,addr)
+        // });
     }
     , sortList : function(list){
         list.sort(function(x, y){
@@ -524,7 +626,7 @@ var M = {
                         html.push('<li>'+
                             '<a href="javascript:void(0)" url="detail.html?guid='+ ele.guid +'">'+
                             '<span class="mny">红包总金额<i class="f-r">'+ ele.value + ' ETH</i></span>'+
-                            '<span class="time">'+ ele.created_at + '<i class="f-r">(包含交易费0.698 ETH))</i></span>'+
+                            '<span class="time">'+ ele.created_at + '<i class="f-r">(包含交易费'+ ele.gasTotal.toFixed(5) +' ETH))</i></span>'+
                             '<span class="status">'+ status +'</span>'+
                             '</a>'+'</li>');
                     })
@@ -537,7 +639,6 @@ var M = {
                     }
 
                 }else{
-                    // M.sendToBehide(param);
                 }
             }
         });
@@ -561,14 +662,14 @@ var M = {
                         , bestLuck = ''
                         , me = ''
                         , curVal = 0
-                        , senderAddr = ''//发红包本人addr
+                        , senderAddr = data.data.info.sender//发红包本人addr
                         , isSender = false//是否是发红包本人
                         , isOver = false//是否抢完
-                        , isMe = false
+                        , isMe = false //抢红包中的人是否有我
+                        , count = data.data.info.count
                         ;
 
                     $('.head .addr').html(M.formatAddr(senderAddr));
-                    $('.head .addr').html(M.formatAddr(M.walletAddr));
                     if(M.walletAddr == senderAddr){
                         isSender = true;
                     }
@@ -621,7 +722,7 @@ var M = {
                     }
 
                     //非自己发的红包，并且被别人抢完了，点击查看领取详情，头部应显示红包总额
-                    if(!isSender && isOver && !isMe){
+                    if((!isSender && isOver && !isMe) || isSender){
                         $('.head .money .big').html(data.data.info.total_value);
                     }
 
@@ -629,13 +730,13 @@ var M = {
                         $('.btn-share').hide();
                         $('.bag-noreceive').hide();
                     }
-
-
-
+                    if(isMe){
+                        $('.head .des').show();
+                    }
 
                     $('.btn-share').click(function(){
                         M.shareImg({
-                            count: param.count //红包个数
+                            count: count //红包个数
                             , money: data.data.info.total_value //金额
                             , word: data.data.info.word //口令
                             , time: new Date(data.expires_at*1000).getTime()
@@ -665,29 +766,68 @@ var M = {
     }
     
     , init:function(){
-        
-        this.bind();
-        try{
-            this.getWalletAddr();
-        }catch(e){}
 
-        if($('body').hasClass('send')){
-            // this.initWeb3(this.sendEvent);
-            this.sendEvent();
-        }else if($('body').hasClass('record')){
-            this.getRecord();
-        }else if($('body').hasClass('snatch')){
-            // this.getDetail();
-        }else if($('body').hasClass('detail')){
-            this.getDetail();
-            
-        }else if($('body').hasClass('index')){
-            this.getRecord();
+        M.curLang = M.getLang();
+        if(M.curLang.indexOf('zh_CN')>-1){
+            M.curLang = 'zh';
+        }else if(M.curLang.indexOf('zh_TW')>-1 || M.curLang.indexOf('zh_HK')>-1 ||　M.curLang.indexOf('zh_MO')>-1){
+            M.curLang = 'tw';
+        }else if(M.curLang.indexOf('en')>-1){
+            M.curLang = 'en';
         }
+
+        $.getJSON('js/lang.json', function(data) {
+            M.lang = data;
+
+            M.bind();
+            try{
+                M.getWalletAddr();
+            }catch(e){}
+
+            if($('body').hasClass('send')){
+                // M.initWeb3(M.sendEvent);
+                M.sendEvent();
+            }else if($('body').hasClass('record')){
+                M.getRecord();
+            }else if($('body').hasClass('snatch')){
+                // M.getDetail();
+            }else if($('body').hasClass('detail')){
+                M.getDetail();
+                
+            }else if($('body').hasClass('index')){
+                M.getRecord();
+            }
+            console.log(M.lang)
+            
+        })
+
+
+
+            
+        
+        
        
     }
 
 }
 $(function () { 
+
+    /*$.ajax({
+        url: 'js/lang.json'
+        , type: 'get'
+        , dataType: 'json'
+        , success: function(data){
+            console.log(data)
+
+        }
+        , error: function(data){
+            console.log(data)
+
+        }
+    })*/
+
+    // $.getJSON('js/lang.json', function(data){
+    //     console.log(data)
+    // })
     M.init();
 });

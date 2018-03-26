@@ -1,5 +1,7 @@
 @charset "utf-8";
 
+@maxWidth: 500px;
+
 /* reset css */
 html, body, div, span, p, ul, li, h1, h2, i, input,dd, dl, dt {
     margin: 0;
@@ -72,6 +74,7 @@ body {
     background-color: #011F3E;
     .wrap {
         text-align: center;
+        max-width: @maxWidth;
     }
 }
 .title {
@@ -125,6 +128,7 @@ body {
     display: block;
     margin-left: auto;
     margin-right: auto;
+    max-width: @maxWidth;
 }
 .btn.disabled {
     opacity: .7;
@@ -176,9 +180,11 @@ body {
     font-weight: 600;
     border-bottom: 1px solid #EBEBEB;
     position: relative;
+    padding-top: 10px;
     .btn-return {
         width: 38px;
-        height: 100%;
+        height: 44px;
+        margin-top: 10px;
         position: absolute;
         left: 10px;
         top: 0;
@@ -192,7 +198,7 @@ body {
     line-height: 20px;
     padding: 10px;
     display: inline-block;
-    position: absolute;
+    position: fixed;
     top: 40%;
     border-radius: 3px;
     left: 50%;
@@ -201,6 +207,40 @@ body {
     text-align: center;
     display: none;
 }
+.loading{
+    background-color: rgba(0, 0, 0, .1);
+    position: fixed;
+    top: 0;
+    left: 0;
+    height: 100%;
+    width: 100%;
+    display: none;
+    span {
+        background: url(../images/loading.png) no-repeat center;
+        width: 50px;
+        height: 50px;
+        position: absolute;
+        left: 50%;
+        top: 50%;
+        margin: -25px 0 0  -25px;
+        display: block;
+        background-size: 50px auto;
+        animation: animRotate 1.2s infinite linear;
+        -webkit-animation: animRotate 1.2s infinite linear;
+    }
+}
+
+@keyframes animRotate { 
+    0%{ 
+        transform: rotate(0deg); 
+        -webkit-transform: rotate(0deg); 
+    } 
+    100%{ 
+        transform: rotate(360deg); 
+        -webkit-transform: rotate(360deg); 
+    } 
+}
+
 .record-list {
     li {
         border-bottom: 1px solid #EBEBEB;
@@ -238,14 +278,18 @@ body {
             .f-r {
                 float: right;
             }
+            .time i {
+                display: none;
+            }
         }
     }
 }
 .send {
     label {
         position: relative;
-        margin: 20px 20px;
+        margin: 20px auto;
         display: block;
+        max-width: @maxWidth;
         .ipt-box {
             &.error {
                 color: #f00;
@@ -333,6 +377,7 @@ body {
         margin: 0 auto;
         text-align: center;
         font-size: 16px;
+        max-width: @maxWidth;
     }
     .btn-confirm-pw {
         background-color: #F8733E;
@@ -365,6 +410,12 @@ body {
             background-size: contain;
             width: 100%;
             height: 100%;
+            max-width: 414px;
+            margin: auto;
+            left: 0;
+            right: 0;
+            top: 0;
+            bottom: 0;
             .ttl, .pop-btn-open, .pop-btm, .pop-close {
                 position: absolute;
                 width: 100%;
@@ -464,7 +515,7 @@ body {
         margin-bottom: 10px;
         text-align: center;
         position: relative;
-        padding: 10px 0;
+        padding: 0px 0 10px;
         &:before {
             content: '';
             position: absolute;
@@ -532,6 +583,7 @@ body {
             font-size: 12px;
             color: #2493FF;
             padding-bottom: 12px;
+            display: none;
         }
     }
     .detail-sender {
@@ -551,6 +603,9 @@ body {
             .money {
                 color: #fff;
                 position: relative;
+            }
+            .des {
+                color: #fff;
             }
         }
         
@@ -616,6 +671,14 @@ body {
         line-height: 20px;
         color: #BABABA;
 
+    }
+}
+
+@media(max-width: 414px){
+    .send {
+        label {
+            margin: 20px;
+        }
     }
 }
 

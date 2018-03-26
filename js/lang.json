@@ -1,0 +1,44 @@
+{
+    "en": {
+        "index": {
+            "title": "Cryptocurrency Packet"
+        }
+        , "send":{
+            "msg1": "The network fee has raised and the remaining network gas is no sufficient"
+            , "msg2": "This password has already been used. Please try another."
+        }
+        , "other": {
+            "noNetwork": "No internet connection"
+        }
+    }
+    ,"zh": {
+        "index":{
+            "title": "红包发币"
+            , "sub": "猎豹移动出品"
+            , "btn1": "抢红包"
+            , "btn2": "发红包"
+        }
+        , "send":{
+            "msg1": "由于交易费上涨，使预留的交易费不足以支付抢红包"
+            , "msg2": "这个口令已经被使用，换一个吧"
+        }
+        , "other": {
+            "noNetwork": "没有网路连线"
+        }
+    }
+    ,"tw": {
+        "index":{
+            "title": "红包发币"
+            , "sub": "猎豹移动出品"
+            , "btn1": "抢红包"
+            , "btn2": "发红包"
+        }
+        , "send": {
+            "msg1": "由於交易費上漲，使預留的交易費不足以支付搶紅包"
+            , "msg2": "這個口令已經被使用，換一個吧"
+        }
+        , "other": {
+            "noNetwork": "沒有網路連線"
+        }
+    }
+}

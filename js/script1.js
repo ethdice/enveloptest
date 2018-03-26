@@ -354,96 +354,93 @@ var M = {
             }
         });
     }
-    , initWeb3: function(callback){
+     , initWeb3: function(callback){
+
         if (typeof web3 !== 'undefined') {
             M.web3Provider = web3.currentProvider;
         } else {
-          // M.web3Provider = new Web3.providers.HttpProvider('http://10.60.119.45:7545');
-          M.web3Provider = new Web3.providers.HttpProvider('http://testethapi.ksmobile.net:8545');
+            // M.web3Provider = new Web3.providers.HttpProvider('http://testethapi.ksmobile.net:8545');
+            M.web3Provider = new Web3.providers.HttpProvider('http://ropsten.infura.io/metamask');
         }
         web3 = new Web3(M.web3Provider);
-        $.getJSON('js/RedEnvelope.json?v=4', function(data) {
-            // 用Adoption.json数据创建一个可交互的TruffleContract合约实例。
-            var AdoptionArtifact = data;
 
-            M.contracts.Adoption = TruffleContract(AdoptionArtifact);
+        $.getJSON('js/RedEnvelope.json?v=5', function(data) {
+           
+            var randomHash = web3.sha3( M.walletAddr+(new Date().getTime()));
+           
+            var AdoptionArtifact = data;
+            
+            // alert(1)
+            //ios
+            M.Contract = web3.eth.contract(AdoptionArtifact.abi).at("0x45ee3442a5594fa14c072e3dce0792dec5b48006");
+            // var MyContract = web3.eth.contract(AdoptionArtifact.abi).at("0xfb0b8970a3f51b6ba30993e876fc3c3dfe8f87f2");
+            M.walletAddr = web3.eth.accounts[0];
+            callback(M.Contract, M.walletAddr)
+            // alert(444)
+            // M.Contract.createPackage.sendTransaction( randomHash, {from: M.walletAddr,value:web3.toWei(0.1, 'ether')}, function(r, data){
+            //     alert(r)
+            //     console.log(r)
+            //     console.log(data)
+            // })
+
+            // M.PunkState.web3ready = true;
+            // callback(M.punkContract, web3.eth.accounts[0])
+
+
+            /*M.contracts.Adoption = TruffleContract(AdoptionArtifact);
             // Set the provider for our contract
             M.contracts.Adoption.setProvider(M.web3Provider);
 
             // M.contracts.Adoption.setNetwork(3)
             M.contracts.Adoption.deployed().then(function(instance) {
-                // alert(888)
-                callback(instance, web3.eth.accounts[0])
+
+                instance.createPackage.sendTransaction( randomHash, {from: M.walletAddr, value:web3.toWei('0.1', 'ether')}
+                )
+                .then(function(value) {
+
+                  
+                }).catch(function(e) {
+                  callback(0 , e );
+                  // console.log(e);
+                });
+
+                // callback(instance, web3.eth.accounts[0])
             }).then(function(result) {
                 // alert(9999)
                   // return M.markAdopted();
             }).catch(function(err) {
                 alert(err)
                 console.log(err.message);
-            });
-
-            // 获取用户账号
-            /*web3.eth.getAccounts(function(error, accounts) {
-                if (error) {
-                  console.log(error);
-                }
-             
-                 account = web3.eth.accounts[0];
-                
-                
-
             });*/
-                  
+
+
+
+
         });
             
     }
-    , createPackage: function( adoption, playMoney, callback ) {
+    , createPackage: function( contract, playMoney, callback ) {
         var randomHash = web3.sha3( M.walletAddr+(new Date().getTime()));
+       
+        M.Contract.createPackage.sendTransaction(randomHash, {from: M.walletAddr,value:web3.toWei(playMoney+'', 'ether')}, function(r, data){
+            // console.log(r);
+            console.log(data);
+                if(data != undefined){
+                    callback(1, {
+                        randomHash: randomHash
+                        , transactionHash: data
+                    });
+                }else{
+                    callback(0, {
+                        randomHash: randomHash
+                        , transactionHash: data
+                    });
+                }
+                
+               
+        })
 
-        adoption.createPackage.sendTransaction( randomHash, {from: M.walletAddr, value:web3.toWei(playMoney, 'ether')} )
-        .then(function(value) {
-
-            callback(1, {
-                randomHash: randomHash
-                , transactionHash: value
-            });
-
-          // var gasLimit,gasPrice;
-
-          // web3.eth.getTransaction(value, function(error, result){
-          //     if( result ){
-          //       gasLimit = result.gas;
-          //       gasPrice = web3.fromWei(result.gasPrice.toNumber(), 'ether');
-          //       console.log(gasLimit);
-          //       console.log(gasPrice);
-          //     }  
-          //     else{
-          //       console.log(error);
-          //     }
-          // })
-
-
-         
-          // window.timer = setInterval(function(){
-
-          //   web3.eth.getTransactionReceipt(value, function(error, result){
-          //       if( result ){
-          //         console.log(JSON.stringify(result));
-          //         clearInterval( timer );
-          //       }  
-          //       else{
-          //         console.log(error);
-          //       }
-          //   })
-            
-          // },2000);
-
-          
-          // callback( '1' ,value );
-        }).catch(function(e) {
-          callback(0 , e );
-          // console.log(e);
-        });
+        
 
     }
     , sortList : function(list){
