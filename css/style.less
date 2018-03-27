@@ -199,7 +199,6 @@ body {
     padding: 10px;
     display: inline-block;
     position: fixed;
-    top: 40%;
     border-radius: 3px;
     left: 50%;
     top: 50%;
@@ -207,6 +206,9 @@ body {
     margin: -20px 0 0 -130px;
     text-align: center;
     display: none;
+}
+.android .toast {
+    top: 90%;
 }
 .loading{
     background-color: rgba(0, 0, 0, .1);
@@ -283,6 +285,12 @@ body {
                 display: none;
             }
         }
+    }
+    .loading {
+        position: relative;
+        height: 60px;
+        background-color: #fff;
+        display: block;
     }
 }
 .send {
@@ -513,10 +521,10 @@ body {
     .head {
         background-color: #fff;
         background-size: contain;
-        margin-bottom: 10px;
         text-align: center;
         position: relative;
-        padding: 0px 0 10px;
+        padding: 0px 0 0px;
+        overflow: hidden;
         &:before {
             content: '';
             position: absolute;
@@ -611,17 +619,55 @@ body {
         }
         
     }
+    .list-box {
+        position: relative;
+        &.list-notransation {
+            .bag-noreceive {
+                background-color: #F2F2F2;
+                position: fixed;
+                bottom: 10px;
+                width: 100%;
+            }
+        }
+    }
+    .no-transition {
+        position: absolute;
+        left: 0;
+        top: 41px;
+        background: url(../images/notransations.png) no-repeat center #F2F2F2;
+        width: 100%;
+        height: 100%;
+        background-size: 120px auto;
+        display: none;
+        span {
+            height: 20px;
+            line-height: 20px;
+            display: block;
+            text-align: center;
+            position: relative;
+            top: 50%;
+            margin-top: 20px;
+            font-size: 12px;
+            color: #BABABA;
+        }
+
+    }
     .list {
-        background-color: #fff;
+        overflow: hidden;
         dt {
             font-size: 14px;
             color: #999999;
-            line-height: 20px;
-            padding: 10px;
+            line-height: 40px;
+            height: 40px;
+            box-sizing: border-box;
+            margin-top: 10px;
+            padding: 0 10px;
+            background-color: #fff;
             border-bottom: 1px solid #F2F2F2;
         }
         dd {
             padding: 14px 10px;
+            background-color: #fff;
             border-bottom: 1px solid #F2F2F2;
             overflow: hidden;
             img {

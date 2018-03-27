@@ -24,6 +24,7 @@
             , "tip": "Red packets that are not opened within 24 hours will be refunded"
             , "countDes": "Gas fee needed for grabbing packet"
         }
+        
         , "other": {
             "noNetwork": "No internet connection"
         }
@@ -55,8 +56,8 @@
             , "btn": "塞币进红包"
             , "tip": "未领取的红包将于24小时后发起退款"
             , "countDes": "部分将用来支付抢红包交易费"
-
         }
+
         , "other": {
             "noNetwork": "没有网路连线"
         }

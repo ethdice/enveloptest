@@ -20,16 +20,38 @@ var M = {
     , getWalletAddr: function(){
         // alert('getWalletAddress')
         M.walletAddr = '0x7fec28c6c1dd271830c8f2ba77dd15f987bbd329';
-        M.walletAddr = '0xf858f42b162bb1ef0c5d99b32b28f3b00b124170';
+        // M.walletAddr = '0xf858f42b162bb1ef0c5d99b32b28f3b00b124170';
         if(M.isInDapp()){
             M.walletAddr = RedEnvelopeHost.getWalletAddress();
+            $('html').addClass('android')
         }else if(M.isInIosDapp()){
+            // alert('ios');
+            // M.walletAddr = M.iosWalletAddress()
+            // alert(M.walletAddr)
             if($('body').hasClass('index')){
                 window.webkit.messageHandlers.h5Callback.postMessage({indexName:'address'});
             }else{
                 window.webkit.messageHandlers.sofaWalletAddress.postMessage({indexName:'address'});
             }
+            $('html').addClass('ios')
         }
+    }
+    , getUserId: function(){
+        if(M.isInDapp()){
+            return RedEnvelope.getUserId();
+        }else if(M.isInIosDapp()){
+            return '';
+        }
+        return '';
+    }
+    , getEnvelopWord: function(){
+        if(M.isInDapp()){
+            return RedEnvelope.getRedPacketPwd();
+        }else if(M.isInIosDapp()){
+            return '';
+        }
+        return '';
+
     }
     , isDownload: function(){
         if(!M.isInDapp() && !M.isInIosDapp()){
@@ -332,7 +354,7 @@ var M = {
         }
 
         if($('body').hasClass('record')){
-            $(document).on('scroll', function() {
+            $(window).scroll(function() {
                 M.scrollLoad();
             });
         }
@@ -376,15 +398,20 @@ var M = {
             success: function(data){
                 console.log(data)
                 if(data.ret == 0){
-                    console.log('success')
+                    var expiresTime = data.expires_at*1000;
+                    M.shareImg({
+                        count: param.count //红包个数
+                        , money: param.value //金额
+                        , word: param.word //口令
+                        , time: expiresTime
+                    });  
                 }else{
-                    
+                    M.showToast('send error');
                 }
             }
         });
     }
     , sendEvent: function(contract, account){
-
         $('.btn-send-envelution').click(function(){
             var param = {}
                 , playMoney = $('.send input[name=eth]').val()
@@ -419,7 +446,8 @@ var M = {
                 return;
             }
 
-            alert('send6')
+            alert('send1')
+
             $.ajax({
                 type: "POST",
                 url: M.path + "/check",
@@ -448,21 +476,14 @@ var M = {
                                     console.log(addr)
                                     if(addr != undefined){
                                         
-                                        $('.loading').show();
-                                        // $('.toast').html('正在生成分享图，请稍等...').show();
+                                        $('.toast').html('正在生成分享图，请稍等...').show();
 
                                         param.guid = web3.sha3( M.walletAddr+(new Date().getTime()));
                                         param.transaction_id = addr;
                                         param.sender = M.walletAddr;
 
                                         M.sendToBehide(param);
-
-                                        M.shareImg({
-                                            count: count //红包个数
-                                            , money: playMoney //金额
-                                            , word: word //口令
-                                            , time: new Date().getTime()
-                                        });                                        
+                                 
                                     }
                             });
                         }
@@ -591,10 +612,16 @@ var M = {
         }
         var param = {
             offset: offset
-            , count : 20
+            , count : 8
             , sender: M.walletAddr
         }
         // alert(M.walletAddr)
+
+        //如果是第二次加载 
+        if(offset != 0){
+            $('.record-list').append('<div class="loading"><span></span></div>');
+        }
+
         $.ajax({
             type: "get",
             url: M.path + "/list",
@@ -610,6 +637,7 @@ var M = {
                         return;
                     }
 
+                    $('.loading').remove();
                     var list = M.sortList(data.data);
 
 
@@ -647,13 +675,8 @@ var M = {
             }
         });
     }
-    , getEnvelop: function(){
-
-    }
+    
     , getDetail: function(){
-
-
-
         var param = {
             offset: 0
             , count : 50
@@ -727,8 +750,11 @@ var M = {
 
 
                     if(isSender){
-                        $('.wrap').addClass('detail-sender');
                         $('.head .ttl').html('发红包详情');
+                        $('.wrap').addClass('detail-sender');
+                    }else{
+                        $('.head .ttl').html('领取详情');
+                        $('.wrap').removeClass('detail-sender');
                     }
 
                     //非自己发的红包，并且被别人抢完了，点击查看领取详情，头部应显示红包总额
@@ -743,21 +769,36 @@ var M = {
                     if(isMe){
                         $('.head .des').show();
                     }
+                    
 
                     $('.btn-share').click(function(){
                         M.shareImg({
                             count: count //红包个数
                             , money: data.data.info.total_value //金额
                             , word: data.data.info.word //口令
-                            , time: new Date(data.expires_at*1000).getTime()
+                            , time: data.expires_at*1000
                         })
                     })
-        
-                    
-
                 }else{
                     
                 }
+                
+                //若无交易
+                if($('.list dd').length == 0){
+                    $('.list-box').addClass('list-notransation');
+                    var listHeight = 0;
+                    if($('dt').length>0){
+                        listHeight = $('.list').height();
+                    }
+                    console.log(listHeight)
+                    $('.no-transition').height($(window).height()-$('.head').height()-listHeight);
+                    $('.no-transition').css('top', listHeight).show();
+                }else{
+                    $('.no-transition').hide();
+                }
+                
+                
+                
             }
         });
     }
@@ -808,6 +849,9 @@ var M = {
 
         $.getJSON('js/lang.json', function(data) {
             M.lang = data;
+            // alert(M.getUserId())
+            // alert(M.getEnvelopWord());
+
             M.bind();
             try{
                 M.getWalletAddr();
@@ -816,7 +860,27 @@ var M = {
             if($('body').hasClass('send')){
                 // M.initWeb3(M.sendEvent);
                 M.initSend();
-                M.sendEvent();
+
+                $.ajax({
+                    type: "POST",
+                    url: M.path + "/info",
+                    data: {} ,
+                    dataType: "json",
+                    success: function(data){
+                        console.log(data)
+                        if(data.ret == 0){
+                            var moneyMax = data.data.max//红包金额最大
+                                , moneyMin = data.data.min//红包金额最小
+                                , unit = data.data.unit //红包最小单位 
+                                ;
+                            
+                            M.sendEvent();
+                        }else{
+                            M.showToast('info error');
+                        }
+                    }
+                });
+
             }else if($('body').hasClass('record')){
                 M.getRecord();
             }else if($('body').hasClass('snatch')){
@@ -837,6 +901,7 @@ var M = {
     }
 
 }
-$(function () { 
+$(function () {
+
     M.init();
 });
