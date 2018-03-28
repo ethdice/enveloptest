@@ -17,7 +17,7 @@
 		<div class="ttl"></div>
 	</div>
 	<label>
-		<div class="ipt-box"><span class="ipt-l"></span><input id="iptMoney" class="error" type="number" style="ime-mode:disabled" name="eth" value="" placeholder="0.000" oninput="value=/^\d+\.?\d{0,3}$/.test(value) ? value : value.split('.')[1].length<=3? value:value=value.split('.')[0]+'.'+value.split('.')[1].substr(0,3)" /><span class="ipt-r">ETH</span></div>
+		<div class="ipt-box"><span class="ipt-l"></span><input id="iptMoney" class="error" type="number" style="ime-mode:disabled" name="eth" value="" placeholder="0.0000" oninput="value=/^\d+\.?\d{0,4}$/.test(value) ? value : value.split('.')[1].length<=4? value:value=value.split('.')[0]+'.'+value.split('.')[1].substr(0,4)" /><span class="ipt-r">ETH</span></div>
 		<div class="ipt-tip"></div>
 	</label>
 	<label>

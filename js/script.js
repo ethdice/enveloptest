@@ -14,25 +14,23 @@ var M = {
         return (navigator.userAgent.indexOf('inIosDapp')>-1);
     }
     , iosWalletAddress: function(str){
-        M.walletAddr = str;
-        // alert(M.walletAddr)
+        // M.walletAddr = str;
+        window.webkit.messageHandlers.h5Callback.postMessage({indexName:str});
+        alert('ios21'+M.walletAddr)
     }
     , getWalletAddr: function(){
-        // alert('getWalletAddress')
-        M.walletAddr = '0x7fec28c6c1dd271830c8f2ba77dd15f987bbd329';
-        // M.walletAddr = '0xf858f42b162bb1ef0c5d99b32b28f3b00b124170';
+        // M.walletAddr = '0x7fec28c6c1dd271830c8f2ba77dd15f987bbd329';
+        M.walletAddr = '0xf858f42b162bb1ef0c5d99b32b28f3b00b124170';
         if(M.isInDapp()){
             M.walletAddr = RedEnvelopeHost.getWalletAddress();
             $('html').addClass('android')
         }else if(M.isInIosDapp()){
-            // alert('ios');
-            // M.walletAddr = M.iosWalletAddress()
-            // alert(M.walletAddr)
             if($('body').hasClass('index')){
                 window.webkit.messageHandlers.h5Callback.postMessage({indexName:'address'});
             }else{
                 window.webkit.messageHandlers.sofaWalletAddress.postMessage({indexName:'address'});
             }
+            alert('ios22' + M.walletAddr)
             $('html').addClass('ios')
         }
     }
@@ -96,7 +94,7 @@ var M = {
             
         }else if(M.isInIosDapp()){
             if(obj != ''){
-                alert('ios share')
+                // alert('ios share')
                 window.webkit.messageHandlers.shareHongbao.postMessage({
                     hongbaoCount:obj.count
                     , ethCount: obj.money
@@ -285,7 +283,7 @@ var M = {
                     , isHasError = false
                     ;
                 if(v == 0){
-                    v = '0.000';
+                    v = '0.0000';
                     isHasError = true;
                 }else if(v > 1000){
                     str = M.lang[M.curLang]['send']['msg8'];
@@ -446,7 +444,7 @@ var M = {
                 return;
             }
 
-            alert('send1')
+            // alert('send1')
 
             $.ajax({
                 type: "POST",
@@ -537,7 +535,7 @@ var M = {
     
     , initWeb3: function(callback){
 
-        alert('init')
+        // alert('init')
         if (typeof web3 !== 'undefined') {
             M.web3Provider = web3.currentProvider;
         } else {
@@ -566,7 +564,7 @@ var M = {
     }
     , createPackage: function( contract, playMoney, callback ) {
         var randomHash = web3.sha3( M.walletAddr+(new Date().getTime()));
-        alert(33333333333)
+        // alert(33333333333)
         M.Contract.createPackage.sendTransaction(randomHash, {from: M.walletAddr,value:web3.toWei(playMoney+'', 'ether')}, function(r, data){
             // console.log(r);
             console.log(data);
