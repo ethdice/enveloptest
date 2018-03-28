@@ -4,7 +4,7 @@
             "title": "Cryptocurrency Packet"
         }
         , "send":{
-            "msg1": "The network fee has raised and the remaining network gas is no sufficient"
+            "msg1": "The amount is not sufficient to pay the gas fee needed for grabbing packet."
             , "msg2": "This password has already been used. Please try another."
             , "msg3": "Up to 1,000 ETH"
             , "msg4": "Up to 500"
@@ -24,7 +24,7 @@
             , "tip": "Red packets that are not opened within 24 hours will be refunded"
             , "countDes": "Gas fee needed for grabbing packet"
         }
-        
+
         , "other": {
             "noNetwork": "No internet connection"
         }
@@ -37,7 +37,7 @@
             , "btn2": "发红包"
         }
         , "send":{
-            "msg1": "由于交易费上涨，使预留的交易费不足以支付抢红包"
+            "msg1": "您的金额不够付抢红包所需的交易费"
             , "msg2": "这个口令已经被使用，换一个吧"
             , "msg3": "最多输入1000 ETH"
             , "msg4": "最多发送500个"
@@ -70,7 +70,7 @@
             , "btn2": "发红包"
         }
         , "send": {
-            "msg1": "由於交易費上漲，使預留的交易費不足以支付搶紅包"
+            "msg1": "您的金額不夠付搶紅包所需的交易費"
             , "msg2": "這個口令已經被使用，換一個吧"
             , "msg3": "最多輸入1000 ETH"
             , "msg4": "最多發送500個"

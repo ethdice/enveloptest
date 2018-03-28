@@ -14,13 +14,11 @@ var M = {
         return (navigator.userAgent.indexOf('inIosDapp')>-1);
     }
     , iosWalletAddress: function(str){
-        // M.walletAddr = str;
-        window.webkit.messageHandlers.h5Callback.postMessage({indexName:str});
-        alert('ios21'+M.walletAddr)
+        M.walletAddr = str;
     }
     , getWalletAddr: function(){
         // M.walletAddr = '0x7fec28c6c1dd271830c8f2ba77dd15f987bbd329';
-        M.walletAddr = '0xf858f42b162bb1ef0c5d99b32b28f3b00b124170';
+        // M.walletAddr = '0xf858f42b162bb1ef0c5d99b32b28f3b00b124170';
         if(M.isInDapp()){
             M.walletAddr = RedEnvelopeHost.getWalletAddress();
             $('html').addClass('android')
@@ -30,7 +28,6 @@ var M = {
             }else{
                 window.webkit.messageHandlers.sofaWalletAddress.postMessage({indexName:'address'});
             }
-            alert('ios22' + M.walletAddr)
             $('html').addClass('ios')
         }
     }
@@ -94,7 +91,6 @@ var M = {
             
         }else if(M.isInIosDapp()){
             if(obj != ''){
-                // alert('ios share')
                 window.webkit.messageHandlers.shareHongbao.postMessage({
                     hongbaoCount:obj.count
                     , ethCount: obj.money
@@ -286,7 +282,7 @@ var M = {
                     v = '0.0000';
                     isHasError = true;
                 }else if(v > 1000){
-                    str = M.lang[M.curLang]['send']['msg8'];
+                    str = M.lang[M.curLang]['send']['msg3'];
                     isHasError = true;
                 }
                 $('.money .big').html(v)
@@ -344,7 +340,7 @@ var M = {
             if(isAdd) {
                 $('.btn').addClass('disabled');
             }else{
-                if($('input.error').length == 0){
+                if($('input.error').length == 0 && $('textarea.error').length == 0){
                     $('.btn').removeClass('disabled');
                 }
             }
@@ -836,6 +832,11 @@ var M = {
     
     , init:function(){
 
+        try{
+            M.getWalletAddr();
+        }catch(e){}
+
+
         M.curLang = M.getLang();
         if(M.curLang.indexOf('zh_CN')>-1){
             M.curLang = 'zh';
@@ -849,11 +850,10 @@ var M = {
             M.lang = data;
             // alert(M.getUserId())
             // alert(M.getEnvelopWord());
+            // alert(M.walletAddr)
 
             M.bind();
-            try{
-                M.getWalletAddr();
-            }catch(e){}
+            
 
             if($('body').hasClass('send')){
                 // M.initWeb3(M.sendEvent);
