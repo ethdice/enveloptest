@@ -146,7 +146,7 @@ var M = {
         $('.btn-confirm-pw').click(function(){
             // alert('generate image');
             var account = M.walletAddr
-                , word = $('.snatch input[name=command]').val()
+                , word = $('.snatch textarea[name=command]').val()
                 , btn = $(this)
                 ;
             if(btn.hasClass('disabled')){
@@ -159,7 +159,7 @@ var M = {
                 return;
             }
 
-            if($('input[name=command]').val() != ''){
+            if($('textarea[name=command]').val() != ''){
                 $('.loading').show();
                 $.ajax({
                     type: "POST",
@@ -198,34 +198,40 @@ var M = {
 
         $('.pop-btn-open').click(function(){
             var account = M.walletAddr
-                , word = $('.snatch input[name=command]').val()
+                , word = $('.snatch textarea[name=command]').val()
                 , btn = $(this)
                 ;
             btn.addClass('disabled')
+            btn.addClass('anim')
             $.ajax({
                 type: "POST",
                 url: M.path + "/snatch?word="+word+'&receiver='+account,
                 dataType: "json",
                 success: function(data){
+
+                    setTimeout(function(){
+                        btn.removeClass('disabled')
+
+                        if(data.ret == 0){
+                            M.jumpUrl('detail.html?word='+encodeURIComponent(word));
+                        }else if(data.ret == 10004){ //no such red packet
+                            M.showToast(data.msg);
+                        }else if(data.ret == 10005){//late
+                            $('.pop-envelope .view-detail').attr('url', 'detail.html?word='+encodeURIComponent(word));
+                            $('.pop-envelope').addClass('late').show();
+                        }else if(data.ret == 10003){
+                            // location.href = 'detail.html?word='+encodeURIComponent(word);
+                            
+                            M.jumpUrl('detail.html?word='+encodeURIComponent(word));
+                            // RedEnvelopeHost.jumpToEnvelope('detail.html?word='+encodeURIComponent(word));
+                        }else {
+                            M.showToast(data.msg)
+                        }
+                        btn.removeClass('anim')
+                    }, 1200)
                     
                     console.log(data)
-                    btn.removeClass('disabled')
-
-                    if(data.ret == 0){
-                        M.jumpUrl('detail.html?word='+encodeURIComponent(word));
-                    }else if(data.ret == 10004){ //no such red packet
-                        M.showToast(data.msg);
-                    }else if(data.ret == 10005){//late
-                        $('.pop-envelope .view-detail').attr('url', 'detail.html?word='+encodeURIComponent(word));
-                        $('.pop-envelope').addClass('late').show();
-                    }else if(data.ret == 10003){
-                        // location.href = 'detail.html?word='+encodeURIComponent(word);
-                        
-                        M.jumpUrl('detail.html?word='+encodeURIComponent(word));
-                        // RedEnvelopeHost.jumpToEnvelope('detail.html?word='+encodeURIComponent(word));
-                    }else {
-                        M.showToast(data.msg)
-                    }
+                    
 
                 }
             });
@@ -409,7 +415,7 @@ var M = {
         $('.btn-send-envelution').click(function(){
             var param = {}
                 , playMoney = $('.send input[name=eth]').val()
-                , word = $('.send input[name=command]').val()
+                , word = $('.send textarea').val()
                 , count = $('.send input[name=number]').val()
                 , gasLimit = 1
                 , gasPrice = '0.0001'
@@ -817,12 +823,12 @@ var M = {
         $('.ttl').html(M.lang[M.curLang]['send']['title']);
         
         $('#iptMoney').siblings('.ipt-l').html(M.lang[M.curLang]['send']['money']);
-        $('#iptMoney').parents('label').find('.ipt-tip').html(M.lang[M.curLang]['send']['moneyDes']);
+        $('#iptMoney').parents('label').find('.ipt-tip').html(M.lang[M.curLang]['send']['countDes']);
         
         $('#iptCount').siblings('.ipt-l').html(M.lang[M.curLang]['send']['count']);
         $('#iptCount').siblings('.ipt-r').html(M.lang[M.curLang]['send']['countUnit']);
         $('#iptCount').attr('placeholder', M.lang[M.curLang]['send']['countPlh']);
-        $('#iptCount').parents('label').find('.ipt-tip').html(M.lang[M.curLang]['send']['countDes']);
+        $('#iptCount').parents('label').find('.ipt-tip').html(M.lang[M.curLang]['send']['moneyDes']);
         
         $('#iptCommand').attr('placeholder', M.lang[M.curLang]['send']['commandPlh']);
         $('#iptCommand').parents('label').find('.ipt-tip').html(M.lang[M.curLang]['send']['commandDes']);

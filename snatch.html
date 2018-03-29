@@ -18,7 +18,8 @@
 	</div>
 
 	<label>输入发红包者的“口令红包”</label>
-	<input type="text" name="command" id="iptCommand" placeholder="" />
+	<textarea name="command" onkeyup="value=value.replace(/[^\w\u4E00-\u9FA5]/g, '')" id="iptCommand" value="" placeholder="" class="error"></textarea>
+	<!-- <input type="text" name="command" id="iptCommand" placeholder="" /> -->
 	<a href="javascript:void(0)"  class="btn btn-confirm-pw disabled">确认口令</a>
 
 

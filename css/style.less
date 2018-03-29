@@ -412,6 +412,21 @@ body {
         font-size: 16px;
         max-width: @maxWidth;
     }
+    textarea {
+        height: 80px;
+        border-radius: 2px;
+        border: 0;
+        line-height: 30px;
+        padding: 10px 56px 10px 20px;
+        width: 90%;
+        color: #000;
+        font-size: 16px;
+        background-color: #F2F2F2;
+        box-sizing: border-box;
+        &.error{
+            color: red;
+        }
+    }
     .btn-confirm-pw {
         background-color: #F8733E;
         margin-top: 38px;
@@ -483,8 +498,10 @@ body {
                 height: 120px;
                 margin-top: 10px;
                 background-size: contain;
-                animation: animRotateOpen 0.6s infinite alternate;
-                -webkit-animation: animRotateOpen 0.6s infinite alternate;
+                &.anim {
+                    animation: animRotateOpen 0.6s infinite alternate;
+                    -webkit-animation: animRotateOpen 0.6s infinite alternate;
+                }
             }
             .pop-btm  {
                 height: 32px;

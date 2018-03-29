@@ -26,7 +26,7 @@
 	</label>
 	<label>
 		<div class="ipt-box">
-			<textarea name="command" id="iptCommand" value="" placeholder="" class="error"></textarea>
+			<textarea name="command" onkeyup="value=value.replace(/[^\w\u4E00-\u9FA5]/g, '')" id="iptCommand" value="" placeholder="" class="error"></textarea>
 			<!-- <input type="text" name="command" id="" value="" placeholder="" class="error" /> -->
 		</div>
 		<div class="ipt-tip"></div>
