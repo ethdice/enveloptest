@@ -7,11 +7,17 @@ var M = {
     , timerToast: null
     , curLang: 'zh'
     , lang: {}
+    , iosNet: false
+
     , isInDapp: function(){
         return (navigator.userAgent.indexOf('inDapp')>-1);
     }
     , isInIosDapp: function(){
         return (navigator.userAgent.indexOf('inIosDapp')>-1);
+    }
+    , iosNetStatus: function(isReached){
+        alert('iosNetStatus'+isReached);
+        M.iosNet = isReached;
     }
     , iosWalletAddress: function(str){
         M.walletAddr = str;
@@ -33,7 +39,7 @@ var M = {
     }
     , getUserId: function(){
         if(M.isInDapp()){
-            return RedEnvelope.getUserId();
+            return RedEnvelopeHost.getUserId();
         }else if(M.isInIosDapp()){
             return '';
         }
@@ -41,7 +47,7 @@ var M = {
     }
     , getEnvelopWord: function(){
         if(M.isInDapp()){
-            return RedEnvelope.getRedPacketPwd();
+            return RedEnvelopeHost.getRedPacketPwd();
         }else if(M.isInIosDapp()){
             return '';
         }
@@ -103,7 +109,7 @@ var M = {
         }
     }
     , getLang: function(){
-         if(M.isInDapp()){
+        if(M.isInDapp()){
             return RedEnvelopeHost.getMobileLanguage();
         }else if(M.isInIosDapp()){
             return 'zh';
@@ -114,7 +120,7 @@ var M = {
         if(M.isInDapp()){
             return RedEnvelopeHost.isMobileNetAvailable();
         }else if(M.isInIosDapp()){
-            return true;
+            return M.iosNet;
         }
         return true;
     }
@@ -145,9 +151,7 @@ var M = {
 
         $('.btn-confirm-pw').click(function(){
             // alert('generate image');
-            var account = M.walletAddr
-                , word = $('.snatch textarea[name=command]').val()
-                , btn = $(this)
+            var btn = $(this)
                 ;
             if(btn.hasClass('disabled')){
                 return;
@@ -160,38 +164,11 @@ var M = {
             }
 
             if($('textarea[name=command]').val() != ''){
-                $('.loading').show();
-                $.ajax({
-                    type: "POST",
-                    url: M.path + "/checkWord?word="+word+'&receiver='+account,
-                    dataType: "json",
-                    success: function(data){
-                        console.log(data)
-                        btn.removeClass('disabled')
-                        $('.loading').hide();
-                        if(data.ret == 0){
-                            $('.pop-envelope').show();
-                            $('.pop-envelope .t span').html(word);
-                            // $('.pop-envelope .pop-btn-open').attr('url', 'detail.html?word='+encodeURIComponent(word));
-
-                        }else if(data.ret == 10004){ //no such red packet
-                            M.showToast(data.msg);
-                        }else if(data.ret == 10005){//late
-                            $('.pop-envelope .view-detail').attr('url', 'detail.html?word='+encodeURIComponent(word));
-                            $('.pop-envelope').addClass('late').show();
-                        }else if(data.ret == 10003){                            
-                            M.jumpUrl('detail.html?word='+encodeURIComponent(word));
-                        }else {
-                            M.showToast(data.msg)
-                        }
-
-                    }
-                });
+                M.checkEnvelopStatus()
 
                 
             }else{
                 btn.removeClass('disabled')
-
             }
         })
 
@@ -214,16 +191,21 @@ var M = {
 
                         if(data.ret == 0){
                             M.jumpUrl('detail.html?word='+encodeURIComponent(word));
+                            //是否从chat进入
+                            if($('body').hasClass('chat')){
+                                RedEnvelopeHost.onBackToRedEnvelope();
+                            }
                         }else if(data.ret == 10004){ //no such red packet
                             M.showToast(data.msg);
                         }else if(data.ret == 10005){//late
                             $('.pop-envelope .view-detail').attr('url', 'detail.html?word='+encodeURIComponent(word));
                             $('.pop-envelope').addClass('late').show();
-                        }else if(data.ret == 10003){
-                            // location.href = 'detail.html?word='+encodeURIComponent(word);
-                            
+                        }else if(data.ret == 10003){                            
                             M.jumpUrl('detail.html?word='+encodeURIComponent(word));
-                            // RedEnvelopeHost.jumpToEnvelope('detail.html?word='+encodeURIComponent(word));
+                            //是否从chat进入
+                            if($('body').hasClass('chat')){
+                                RedEnvelopeHost.onBackToRedEnvelope();
+                            }
                         }else {
                             M.showToast(data.msg)
                         }
@@ -359,6 +341,62 @@ var M = {
             });
         }
     }
+
+    , checkEnvelopStatus: function(){
+        $('.loading').show();
+        var word = $('.snatch textarea[name=command]').val()
+            , btn = $('.btn')
+            ;
+
+        $.ajax({
+            type: "POST",
+            url: M.path + "/checkWord?word="+word+'&receiver='+M.walletAddr,
+            dataType: "json",
+            success: function(data){
+                console.log(data)
+                btn.removeClass('disabled')
+                $('.loading').hide();
+
+                //是否从chat进入
+                if($('body').hasClass('chat')){
+                    if(data.ret == 0){
+                        $('.pop-envelope .t span').html(word);
+                    }else if(data.ret == 10004){ //no such red packet
+                        // $('.pop-envelope .view-detail').attr('url', 'detail.html?word='+encodeURIComponent(word));
+                        alert(10004)
+                        $('.pop-envelope').addClass('expire').show();
+                    }else if(data.ret == 10005){//late
+                        $('.pop-envelope .view-detail').attr('url', 'detail.html?word='+encodeURIComponent(word));
+                        $('.pop-envelope').addClass('late').show();
+                    }else if(data.ret == 10003){                            
+                        M.jumpUrl('detail.html?word='+encodeURIComponent(word));
+                        RedEnvelopeHost.onBackToRedEnvelope();
+                    }else {
+                        M.showToast(data.msg)
+                    }
+                }else{
+                    if(data.ret == 0){
+                        $('.pop-envelope').show();
+                        $('.pop-envelope .t span').html(word);
+                        // $('.pop-envelope .pop-btn-open').attr('url', 'detail.html?word='+encodeURIComponent(word));
+
+                    }else if(data.ret == 10004){ //no such red packet
+                        M.showToast(data.msg);
+                    }else if(data.ret == 10005){//late
+                        $('.pop-envelope .view-detail').attr('url', 'detail.html?word='+encodeURIComponent(word));
+                        $('.pop-envelope').addClass('late').show();
+                    }else if(data.ret == 10003){                            
+                        M.jumpUrl('detail.html?word='+encodeURIComponent(word));
+                    }else {
+                        M.showToast(data.msg)
+                    }
+
+                }
+                
+            }
+        });
+    }
+
     , bottomDistance: function() {
         var pageHeight = Math.max(document.body.scrollHeight, document.body.offsetHeight);
         var viewportHeight = window.innerHeight || document.documentElement.clientHeight || document.body.clientHeight || 0;
@@ -835,6 +873,17 @@ var M = {
         $('.btn-send-envelution').html(M.lang[M.curLang]['send']['btn']);
         $('.after-tip').html(M.lang[M.curLang]['send']['tip']);
     }
+    , initSnatch: function(){
+        // alert(M.getUserId())
+        // alert(M.getEnvelopWord());
+        var word = M.getEnvelopWord();
+        if(word != ''){
+            $('#iptCommand').val(word).removeClass('error');
+            $('.pop-envelope').show();
+            M.checkEnvelopStatus();
+            $('body').addClass('chat');
+        }
+    }
     
     , init:function(){
 
@@ -842,6 +891,9 @@ var M = {
             M.getWalletAddr();
         }catch(e){}
 
+        if(M.isInIosDapp()){
+            window.webkit.messageHandlers.netStatus.postMessage({indexName:'net'});
+        }
 
         M.curLang = M.getLang();
         if(M.curLang.indexOf('zh_CN')>-1){
@@ -854,17 +906,11 @@ var M = {
 
         $.getJSON('js/lang.json', function(data) {
             M.lang = data;
-            // alert(M.getUserId())
-            // alert(M.getEnvelopWord());
             // alert(M.walletAddr)
-
             M.bind();
-            
-
             if($('body').hasClass('send')){
                 // M.initWeb3(M.sendEvent);
                 M.initSend();
-
                 $.ajax({
                     type: "POST",
                     url: M.path + "/info",
@@ -888,7 +934,7 @@ var M = {
             }else if($('body').hasClass('record')){
                 M.getRecord();
             }else if($('body').hasClass('snatch')){
-                // M.getDetail();
+                M.initSnatch();
             }else if($('body').hasClass('detail')){
                 M.getDetail();
             }else if($('body').hasClass('index')){

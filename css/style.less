@@ -484,7 +484,7 @@ body {
                 font-size: 16px;
                 color: #FFEA74;
                 line-height: 26px;
-                .late-t {
+                .late-t, .expire-t {
                     display: none;
                 }
                 .pop-word {
@@ -523,15 +523,20 @@ body {
             
         }
 
-        &.late {
+        
+
+        &.late, &.expire {
             .inner {
                 .ttl {
                     margin-top: -190px;
                     font-size: 14px;
-                    .late-t {
+                    .late-t, .expire-t {
                         display: block;
                         margin-top: 50px;
                         font-size: 22px;
+                    }
+                    .expire-t { 
+                        display: none;
                     }
                 }
                 .pop-btn-open {
@@ -550,6 +555,23 @@ body {
                         background: url(../images/view.png) no-repeat right center;
                         background-size: 6px auto;
                     }
+                }
+            }
+        }
+
+        &.expire  {
+            .inner {
+                .ttl .expire-t {
+                    display: block;
+                }
+                .ttl .late-t {
+                    display: none;
+                }
+                .pop-btm .pop-logo {
+                    display: block;
+                }
+                .pop-btm .view-detail {
+                    display: none;
                 }
             }
         }
