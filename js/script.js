@@ -56,14 +56,14 @@ var M = {
     , isDownload: function(){
         if(!M.isInDapp() && !M.isInIosDapp()){
             var html = '<div class="dialog">'+
-                        '<div class="title"></div>'+
-                        '<div class="cnt"></div>'+
-                        '<a href="https://www.cmcmbc.com/zh-cn/dapp-browser/" class="btn-ok"></a>'+
-                        '<a href="javascript:void(0);" class="btn-cancel"></a></div>';
+                        '<div class="title">'+ M.lang[M.curLang]['other']['downloadTitle'] +'</div>'+
+                        '<div class="cnt">'+ M.lang[M.curLang]['other']['downloadCnt'] +'</div>'+
+                        '<a href="https://www.cmcmbc.com/zh-cn/dapp-browser/" class="d-btn btn-ok">'+ M.lang[M.curLang]['other']['btnOk'] +'</a>'+
+                        '<a href="javascript:void(0);" class="d-btn btn-cancel">'+ M.lang[M.curLang]['other']['btnCancel'] +'</a></div>';
 
             $('body').append(html);
 
-            $('body').on('.btn-cancel', 'click', function(){
+            $('.btn-cancel').click(function(){
                 $('.dialog').hide();
             })
         }
@@ -681,20 +681,7 @@ var M = {
                 
                
         })
-        // alert(M.walletAddr)
-        // web3.eth.sendTransaction(
-        //     {
-        //         from: M.walletAddr
-        //         , to: '0x9264f90fc14af5e2335bb4be65a617467ecd2af7'
-        //         , value: web3.toWei(playMoney+'', 'ether')
-        //         // , data: web3.toWei(playMoney+'', 'ether')
-        //     }
-        //     , function(err, addr){
-
-        //         console.log(err)
-        //         console.log(addr)
-        //         callback(err,addr)
-        // });
+        
     }
     , sortList : function(list){
         list.sort(function(x, y){
@@ -1122,9 +1109,8 @@ $(function () {
 
 
 function loading(){
-    $('body').css('color', 'red')
     //如果不是从chat进入的显示loading
-    if(!$('body').hasClass('chat')){
+    // if(!$('body').hasClass('chat')){
         $('.toast').html('正在生成分享图，请稍等...').show();
-    }
+    // }
 }

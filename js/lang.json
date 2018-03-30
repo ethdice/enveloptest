@@ -1,19 +1,19 @@
 {
     "en": {
         "index": {
-            "title": "Cryptocurrency Packet"
+            "title": "Coin Packet"
             , "sub": "Powered by Cheetah Mobile"
             , "btn1": "GRAB"
             , "btn2": "SEND"
-            , "tryTip": "Try sending red packets to your friends"
-            , "cardTitle": "What is \"Cryptocurrency Packet\"?"
-            , "p1": "Description: A red packet with blockchain-based cryptocurrency within it"
-            , "p2": "Cryptocurrency type: Ethereum"
-            , "p3": "Send: Enter the cryptocurrency amount, set a password, and let your friends come grab it."
-            , "p4": "Grab: Enter the correct password to grab (open) your friend's red packet"
-            , "p5": "Tip: The amount you can get in red packets is random. Everyone has the chance to get the highest amount."
+            , "tryTip": "Try sending coin packets to your friends"
+            , "cardTitle": "What is \"Coin Packet\"?"
+            , "p1": "Description: A coin packet with blockchain-based coin within it"
+            , "p2": "Coin type: Ethereum"
+            , "p3": "Send: Enter the coin amount, set a password, and let your friends come grab it."
+            , "p4": "Grab: Enter the correct password to grab (open) your friend's coin packet"
+            , "p5": "Tip: The amount you can get in coin packets is random. Everyone has the chance to get the highest amount."
             , "share": "SHARE"
-            , "shareTip": "Get your friends to send you red packets"
+            , "shareTip": "Get your friends to send you coin packets"
             , "recordTip": "VIEW SENT HISTORY"
         }
         , "send":{
@@ -25,16 +25,16 @@
             , "msg6": "Password must be at least 6 characters long"
             , "msg7": "Password must not exceed 20 characters"
             , "msg8": "Please make sure each packets' minimum amount is 0.0001 ETH or more"
-            , "title": "Send Red Packet"
+            , "title": "Send Coin Packet"
             , "money": "Total"
             , "moneyDes": "Random amount"
             , "count": "Quantity"
             , "countPlh": "Enter amount"
             , "countUnit": ""
             , "commandPlh": "6-20 characters or numbers"
-            , "commandDes": "A password is required to open red packets"
-            , "btn": "PREPARE RED PACKET"
-            , "tip": "Red packets that are not opened within 24 hours will be refunded"
+            , "commandDes": "A password is required to open coin packets"
+            , "btn": "PREPARE COIN PACKET"
+            , "tip": "Coin packets that are not opened within 24 hours will be refunded"
             , "countDes": "Gas fee needed for grabbing packet"
         }
         , "record": {
@@ -49,30 +49,33 @@
         , "detail": {
         	"title": "Packets Received"
         	, "titleSend": "Sent Packets"
-        	, "des": "Red packet received. Transaction info will be available shortly."
+        	, "des": "Coin packet received. Transaction info will be available shortly."
         	, "dt": "Opened:<span class=\"curCount\"></span>/<span class=\"allCount\"></span>(Amount:<span class=\"curMoney\"></span>/<span class=\"allMoney\"></span> ETH)"
         	, "lucky": "Lucky Winner"
         	, "me": "ME"
-        	, "btm1": "Red packets that are not opened within 24 hours will be refunded"
-        	, "btm2": "Expired and unopened red packets will be refunded"
-        	, "msg1": "No one has opened this red packet"
+        	, "btm1": "Coin packets that are not opened within 24 hours will be refunded"
+        	, "btm2": "Expired and unopened coin packets will be refunded"
+        	, "msg1": "No one has opened this coin packet"
         	, "msg2": "Failed to grab packet. The network fee has raised and the remaining network gas is no sufficient"
 			
         }
         , "snatch":{
-        	 "title": "Grab Red Packets"
+        	 "title": "Grab Coin Packets"
             , "lable": "Enter password to grab"
             , "btn": "GRAB"
-            , "late": "No red packet available"
+            , "late": "No coin packet available"
             , "expire": "Expired"
             , "veiewDetail": "Check Details"
-            , "popTtl": "Password Red Packets"
+            , "popTtl": "Password Coin Packets"
             , "msg3": "<span class=\"errTimes\"></span> failed password attempts. If you fail <span class=\"leftTimes\"></span> more times, you will be prohibited for 5 hours."
         	, "msg4": "You have reached the maximum password attempts. Please try again later."
         }
         , "other": {
             "noNetwork": "No internet connection"
-            , "downloadCnt": "\"Cryptocurrency Packet\" is only supported in Dapp Browser. Please download it first."
+            , "downloadTitle": "Download Dapp Browser"
+            , "downloadCnt": "\"Coin Packet\" is only supported in Dapp Browser. Please download it first."
+            , "btnOk": "DOWNLOAD"
+            , "btnCancel": "NOT NOW"
         }
     }
     , "zh": {
@@ -150,7 +153,10 @@
 
         , "other": {
             "noNetwork": "没有网路连线"
+            , "downloadTitle": "下载DAPP浏览器"
             , "downloadCnt": "“红包发币”只能在Dapp浏览器应用中使用，请先下载"
+            , "btnOk": "继续"
+            , "btnCancel": "取消"
         }
     }
      ,"tw": {
@@ -226,7 +232,10 @@
         }
         , "other": {
             "noNetwork": "沒有網路連線"
+            , "downloadTitle": "下載Dapp瀏覽器"
             , "downloadCnt": "“紅包發幣”只能在Dapp瀏覽器app中使用，請先下載"
+            , "btnOk": "繼續"
+            , "btnCancel": "取消"
         }
     }
 }
