@@ -64,20 +64,25 @@ var M = {
         }
     }
     , jumpUrl: function(url){
-        if(!M.isHasNetwork()){
-            M.showToast(M.lang[M.curLang]['other']['noNetwork'])
-            return;
-        }
+        
         if(M.isInDapp()){
             if(url.indexOf('back')>-1){
                 RedEnvelopeHost.onBackToRedEnvelope();
             }else{
+                if(!M.isHasNetwork()){
+                    M.showToast(M.lang[M.curLang]['other']['noNetwork'])
+                    return;
+                }
                 RedEnvelopeHost.jumpToEnvelope(url);
             }
         }else if(M.isInIosDapp()){
             if(url == 'back'){
                 window.webkit.messageHandlers.sofaH5Callback.postMessage({indexName: url});
             }else{
+                if(!M.isHasNetwork()){
+                    M.showToast(M.lang[M.curLang]['other']['noNetwork'])
+                    return;
+                }
                 window.webkit.messageHandlers.h5Callback.postMessage({indexName: url});
             }
         }
