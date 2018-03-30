@@ -17,6 +17,7 @@ var M = {
     }
     , iosNetStatus: function(isReached){
         M.iosNet = isReached;
+
     }
     , iosWalletAddress: function(str){
         M.walletAddr = str;
@@ -160,20 +161,23 @@ var M = {
             // alert('generate image');
             var btn = $(this)
                 ;
-            if(btn.hasClass('disabled')){
-                return;
-            }
-            btn.addClass('disabled')
+            
 
             if(!M.isHasNetwork()){
                 M.showToast(M.lang[M.curLang]['other']['noNetwork'])
                 return;
             }
 
+            if(btn.hasClass('disabled')){
+                return;
+            }
+            btn.addClass('disabled')
+
             if($('textarea[name=command]').val().length < 6){
                 $('#iptCommand').addClass('hasClicked error');
                 M.showToast(M.lang[M.curLang]['send']['msg6']);     
             }else if($('textarea[name=command]').val() != ''){
+
                 M.checkEnvelopStatus()
             }else{
                 btn.removeClass('disabled')
@@ -186,8 +190,15 @@ var M = {
                 , word = $('.snatch textarea[name=command]').val()
                 , btn = $(this)
                 ;
+
+            if(!M.isHasNetwork()){
+                M.showToast(M.lang[M.curLang]['other']['noNetwork'])
+                return;
+            }
+
             btn.addClass('disabled')
             btn.addClass('anim')
+            
             $.ajax({
                 type: "POST",
                 url: M.path + "/snatch?word="+word+'&receiver='+account,
@@ -482,6 +493,13 @@ var M = {
                 M.showToast(M.lang[M.curLang]['send']['msg6'])
                 return;
             }
+
+            if(!M.isHasNetwork()){
+                M.showToast(M.lang[M.curLang]['other']['noNetwork'])
+                return;
+            }
+
+
             if(btn.hasClass('disabled')){
                 return;
             }
@@ -491,12 +509,6 @@ var M = {
                 , word: word
                 , count: count
             }
-
-            if(!M.isHasNetwork()){
-                M.showToast(M.lang[M.curLang]['other']['noNetwork'])
-                return;
-            }
-
             // alert('send1')
 
             $.ajax({
@@ -1013,19 +1025,6 @@ var M = {
                                 M.sendEvent();
 
 
-
-        //                         setTimeout(function(){
-        //     alert(2)
-        //     web3.eth.sendTransaction(
-        //         {
-        //             // from: '0x9264f90fc14af5e2335bb4be65a617467ecd2af7', 
-        //             to: '0x9264f90fc14af5e2335bb4be65a617467ecd2af7'
-        //             , value: web3.toWei(2+'', 'ether')
-        //         }
-        //         , function(err, addr){
-        //             alert(333)
-        //     });
-        // },3000)
 
 
                             }else{
