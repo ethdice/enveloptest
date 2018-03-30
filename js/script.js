@@ -139,12 +139,12 @@ var M = {
         }
         return 'zh';
     }
-    , loading: function(){
-        //如果不是从chat进入的显示loading
-        if(!$('body').hasClass('chat')){
-            $('.toast').html('正在生成分享图，请稍等...').show();
-        }
-    }
+    //, loading: function(){
+    //     //如果不是从chat进入的显示loading
+    //     if(!$('body').hasClass('chat')){
+    //         $('.toast').html('正在生成分享图，请稍等...').show();
+    //     }
+    // }
     , isHasNetwork: function(){
         if(M.isInDapp()){
             return RedEnvelopeHost.isMobileNetAvailable();
@@ -1119,3 +1119,12 @@ var M = {
 $(function () {
     M.init();
 });
+
+
+function loading(){
+    $('body').css('color', 'red')
+    //如果不是从chat进入的显示loading
+    if(!$('body').hasClass('chat')){
+        $('.toast').html('正在生成分享图，请稍等...').show();
+    }
+}
