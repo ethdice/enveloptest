@@ -66,7 +66,7 @@
             , "late": "No coin packet available"
             , "expire": "Expired"
             , "veiewDetail": "Check Details"
-            , "popTtl": "Password Coin Packets"
+            , "popTtl": "Password"
             , "msg3": "<span class=\"errTimes\"></span> failed password attempts. If you fail <span class=\"leftTimes\"></span> more times, you will be prohibited for 5 hours."
         	, "msg4": "You have reached the maximum password attempts. Please try again later."
         }
