@@ -16,7 +16,6 @@ var M = {
         return (navigator.userAgent.indexOf('inIosDapp')>-1);
     }
     , iosNetStatus: function(isReached){
-        alert('iosNetStatus'+isReached);
         M.iosNet = isReached;
     }
     , iosWalletAddress: function(str){
@@ -65,7 +64,6 @@ var M = {
     }
     , jumpUrl: function(url){
         if(!M.isHasNetwork()){
-        // alert(M.lang[M.curLang]['other']['noNetwork'])
             M.showToast(M.lang[M.curLang]['other']['noNetwork'])
             return;
         }
@@ -172,7 +170,10 @@ var M = {
                 return;
             }
 
-            if($('textarea[name=command]').val() != ''){
+            if($('textarea[name=command]').val().length < 6){
+                $('#iptCommand').addClass('hasClicked error');
+                M.showToast(M.lang[M.curLang]['send']['msg6']);     
+            }else if($('textarea[name=command]').val() != ''){
                 M.checkEnvelopStatus()
             }else{
                 btn.removeClass('disabled')
@@ -388,12 +389,16 @@ var M = {
                         $('.pop-envelope .t  .pop-word span').html(word);
                         //$('.pop-envelope .pop-btn-open').attr('url', 'detail.html?word='+encodeURIComponent(word));
 
+                    }else if(data.ret == 10008){ //blocked for 5 hours
+                        M.showToast(M.lang[M.curLang]['snatch']['msg4']);
                     }else if(data.ret == 10004){ //no such red packet
-                        M.showToast(data.msg);
+                        M.showToast(M.lang[M.curLang]['snatch']['msg3']);
+                        $('.toast').find('.errTimes').html(data.data.already_input_times)
+                        $('.toast').find('.leftTimes').html(data.data.remain_times)
                     }else if(data.ret == 10005){//late
                         $('.pop-envelope .view-detail').attr('url', 'detail.html?word='+encodeURIComponent(word));
                         $('.pop-envelope').addClass('late').show();
-                    }else if(data.ret == 10003){                            
+                    }else if(data.ret == 10003){//已经抢过                            
                         M.jumpUrl('detail.html?word='+encodeURIComponent(word));
                     }else {
                         M.showToast(data.msg)

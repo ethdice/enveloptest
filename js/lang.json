@@ -50,14 +50,14 @@
         	"title": "Packets Received"
         	, "titleSend": "Sent Packets"
         	, "des": "Red packet received. Transaction info will be available shortly."
-        	, "dt": "Opened:<span class=\"curCount\"></span>\\<span class=\"allCount\"></span>(Amount:<span class=\"curMoney\"></span>\\<span class=\"allMoney\"></span> ETH)"
+        	, "dt": "Opened:<span class=\"curCount\"></span>/<span class=\"allCount\"></span>(Amount:<span class=\"curMoney\"></span>/<span class=\"allMoney\"></span> ETH)"
         	, "lucky": "Lucky Winner"
         	, "me": "ME"
         	, "btm1": "Red packets that are not opened within 24 hours will be refunded"
         	, "btm2": "Expired and unopened red packets will be refunded"
         	, "msg1": "No one has opened this red packet"
         	, "msg2": "Failed to grab packet. The network fee has raised and the remaining network gas is no sufficient"
-
+			
         }
         , "snatch":{
         	 "title": "Grab Red Packets"
@@ -67,6 +67,8 @@
             , "expire": "Expired"
             , "veiewDetail": "Check Details"
             , "popTtl": "Password Red Packets"
+            , "msg3": "<span class=\"errTimes\"></span> failed password attempts. If you fail <span class=\"leftTimes\"></span> more times, you will be prohibited for 5 hours."
+        	, "msg4": "You have reached the maximum password attempts. Please try again later."
         }
         , "other": {
             "noNetwork": "No internet connection"
@@ -115,13 +117,14 @@
         	"title": "领取详情"
         	, "titleSend": "发红包详情"
         	, "des": "已抢到红包，稍等交易建立可在钱包查看"
-        	, "dt": "已领取<span class=\"curCount\"></span>\\<span class=\"allCount\"></span>个，共<span class=\"curMoney\"></span>\\<span class=\"allMoney\"></span> ETH"
+        	, "dt": "已领取<span class=\"curCount\"></span>/<span class=\"allCount\"></span>个，共<span class=\"curMoney\"></span>/<span class=\"allMoney\"></span> ETH"
         	, "lucky": "手气最佳"
         	, "me": "我"
         	, "btm1": "未领取的红包将于24小时后发起退款"
         	, "btm2": "过期未被领取的红包将退款"
         	, "msg1": "还没有人抢红包"
         	, "msg2": "无法抢红包。由于交易费上涨，使预留的交易费不足以支付抢红包"
+        	
 
         }
         , "record": {
@@ -141,6 +144,8 @@
             , "expire": "过期"
             , "veiewDetail": "查看领取详情"
             , "popTtl": "口令红包"
+        	, "msg3": "输错<span class=\"errTimes\"></span>次，再输错<span class=\"leftTimes\"></span>次会禁止输入5小时"
+        	, "msg4": "口令输错次数超过10次，请稍后再试"
         }
 
         , "other": {
@@ -185,7 +190,6 @@
             , "btn": "塞幣進紅包"
             , "tip": "未領取的紅包將於24小時後發起退款"
             , "countDes": "部分將用來支付搶紅包交易費"
-
         }
         , "record": {
         	"title": "發送紀錄"
@@ -200,7 +204,7 @@
         	"title": "領取詳情"
         	, "titleSend": "發紅包詳情"
         	, "des": "已搶到紅包，稍等交易建立可在錢包查看"
-        	, "dt": "已領取<span class=\"curCount\"></span>\\<span class=\"allCount\"></span>個，共<span class=\"curMoney\"></span>\\<span class=\"allMoney\"></span> ETH"
+        	, "dt": "已領取<span class=\"curCount\"></span>/<span class=\"allCount\"></span>個，共<span class=\"curMoney\"></span>/<span class=\"allMoney\"></span> ETH"
         	, "lucky": "手氣最佳"
         	, "me": "我"
         	, "btm1": "未領取的紅包將於24小時後發起退款"
@@ -217,6 +221,8 @@
             , "expire": "過期"
             , "veiewDetail": "查看領取詳情"
             , "popTtl": "口令紅包"
+            , "msg3": "輸錯<span class=\"errTimes\"></span>次，再輸錯<span class=\"leftTimes\"></span>次會禁止輸入5小時"
+        	, "msg4": "口令輸錯次數超過10次，請稍後再試"
         }
         , "other": {
             "noNetwork": "沒有網路連線"
