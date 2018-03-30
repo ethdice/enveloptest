@@ -1043,7 +1043,7 @@ var M = {
                 if(M.curLang == '') {
                     M.curLang = M.getLang();
                 }
-                alert('init:'+M.curLang)
+                // alert('init:'+M.curLang)
 
                 if(M.isInIosDapp()){
                     if(M.curLang == 'cn'){
