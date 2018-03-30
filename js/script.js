@@ -55,11 +55,17 @@ var M = {
     }
     , isDownload: function(){
         if(!M.isInDapp() && !M.isInIosDapp()){
-            var r = confirm(M.lang[M.curLang]['other']['downloadCnt']);
-            if(r){
-                location.href = 'https://www.cmcmbc.com/zh-cn/dapp-browser/';
-            }            
-            return false;
+            var html = '<div class="dialog">'+
+                        '<div class="title"></div>'+
+                        '<div class="cnt"></div>'+
+                        '<a href="https://www.cmcmbc.com/zh-cn/dapp-browser/" class="btn-ok"></a>'+
+                        '<a href="javascript:void(0);" class="btn-cancel"></a></div>';
+
+            $('body').append(html);
+
+            $('body').on('.btn-cancel', 'click', function(){
+                $('.dialog').hide();
+            })
         }
     }
     , jumpUrl: function(url){
@@ -123,7 +129,7 @@ var M = {
 
     , iosPhoneLanguage: function(strLanguage){
         M.curLang = strLanguage;
-        alert(M.curLang);
+        // alert(M.curLang);
     }
     , getLang: function(){
         if(M.isInDapp()){
