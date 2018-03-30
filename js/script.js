@@ -297,6 +297,8 @@ var M = {
                 }else if(v > M.moneyMax){
                     str = M.lang[M.curLang]['send']['msg3']+M.moneyMax+'ETH';
                     isHasError = true;
+                }else if(v.indexOf('-')>-1 || v.indexOf('+')>-1){
+                    isHasError = true;
                 }
                 $('.money .big').html(v)
                 checkBtnStatus(str, isHasError, $(this));
