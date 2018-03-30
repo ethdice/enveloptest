@@ -2,12 +2,25 @@
     "en": {
         "index": {
             "title": "Cryptocurrency Packet"
+            , "sub": "Powered by Cheetah Mobile"
+            , "btn1": "GRAB"
+            , "btn2": "SEND"
+            , "tryTip": "Try sending red packets to your friends"
+            , "cardTitle": "What is \"Cryptocurrency Packet\"?"
+            , "p1": "Description: A red packet with blockchain-based cryptocurrency within it"
+            , "p2": "Cryptocurrency type: Ethereum"
+            , "p3": "Send: Enter the cryptocurrency amount, set a password, and let your friends come grab it."
+            , "p4": "Grab: Enter the correct password to grab (open) your friend's red packet"
+            , "p5": "Tip: The amount you can get in red packets is random. Everyone has the chance to get the highest amount."
+            , "share": "SHARE"
+            , "shareTip": "Get your friends to send you red packets"
+            , "recordTip": "VIEW SENT HISTORY"
         }
         , "send":{
             "msg1": "The amount is not sufficient to pay the gas fee needed for grabbing packet."
             , "msg2": "This password has already been used. Please try another."
-            , "msg3": "Up to 1,000 ETH"
-            , "msg4": "Up to 500"
+            , "msg3": "Up to "
+            , "msg4": "Up to "
             , "msg5": "Please only use Chinese/English characters or numbers"
             , "msg6": "Password must be at least 6 characters long"
             , "msg7": "Password must not exceed 20 characters"
@@ -24,23 +37,64 @@
             , "tip": "Red packets that are not opened within 24 hours will be refunded"
             , "countDes": "Gas fee needed for grabbing packet"
         }
+        , "record": {
+        	"title": "Sent History"
+        	, "status1": "Available"
+        	, "status2": "None Available"
+        	, "status3": "Expired"
+        	, "status4": "Transaction failed"
+        	, "trstMny": "Amount"
 
+        }
+        , "detail": {
+        	"title": "Packets Received"
+        	, "titleSend": "Sent Packets"
+        	, "des": "Red packet received. Transaction info will be available shortly."
+        	, "dt": "Opened:<span class=\"curCount\"></span>\\<span class=\"allCount\"></span>(Amount:<span class=\"curMoney\"></span>\\<span class=\"allMoney\"></span> ETH)"
+        	, "lucky": "Lucky Winner"
+        	, "me": "ME"
+        	, "btm1": "Red packets that are not opened within 24 hours will be refunded"
+        	, "btm2": "Expired and unopened red packets will be refunded"
+        	, "msg1": "No one has opened this red packet"
+        	, "msg2": "Failed to grab packet. The network fee has raised and the remaining network gas is no sufficient"
+
+        }
+        , "snatch":{
+        	 "title": "Grab Red Packets"
+            , "lable": "Enter password to grab"
+            , "btn": "GRAB"
+            , "late": "No red packet available"
+            , "expire": "Expired"
+            , "veiewDetail": "Check Details"
+            , "popTtl": "Password Red Packets"
+        }
         , "other": {
             "noNetwork": "No internet connection"
+            , "downloadCnt": "\"Cryptocurrency Packet\" is only supported in Dapp Browser. Please download it first."
         }
     }
-    ,"zh": {
+    , "zh": {
         "index":{
             "title": "红包发币"
             , "sub": "猎豹移动出品"
             , "btn1": "抢红包"
             , "btn2": "发红包"
+            , "tryTip": "试试给大家发个红包"
+            , "cardTitle": "“红包发币”是什么？"
+            , "p1": "别名：区块链上的虚拟货币红包"
+            , "p2": "币种：ETH"
+            , "p3": "玩法1：设定口令来发红包给朋友，让他们叫爸爸！"
+            , "p4": "玩法2：输入指定口令来抢红包，抱大腿！"
+            , "p5": "小秘密：拼手气红包，人人都有机会抢到高金额"
+            , "share": "生成图片分享"
+            , "shareTip": "撩土豪，发红包"
+            , "recordTip": "查看发送记录"
         }
         , "send":{
             "msg1": "您的金额不够付抢红包所需的交易费"
             , "msg2": "这个口令已经被使用，换一个吧"
-            , "msg3": "最多输入1000 ETH"
-            , "msg4": "最多发送500个"
+            , "msg3": "最多输入"
+            , "msg4": "最多发送"
             , "msg5": "只能输入中文，英文和数字"
             , "msg6": "最少输入6个字"
             , "msg7": "最多输入20字"
@@ -57,23 +111,65 @@
             , "tip": "未领取的红包将于24小时后发起退款"
             , "countDes": "部分将用来支付抢红包交易费"
         }
+        , "detail": {
+        	"title": "领取详情"
+        	, "titleSend": "发红包详情"
+        	, "des": "已抢到红包，稍等交易建立可在钱包查看"
+        	, "dt": "已领取<span class=\"curCount\"></span>\\<span class=\"allCount\"></span>个，共<span class=\"curMoney\"></span>\\<span class=\"allMoney\"></span> ETH"
+        	, "lucky": "手气最佳"
+        	, "me": "我"
+        	, "btm1": "未领取的红包将于24小时后发起退款"
+        	, "btm2": "过期未被领取的红包将退款"
+        	, "msg1": "还没有人抢红包"
+        	, "msg2": "无法抢红包。由于交易费上涨，使预留的交易费不足以支付抢红包"
+
+        }
+        , "record": {
+        	"title": "发送纪录"
+        	, "status1": "抢红包中"
+        	, "status2": "已抢完"
+        	, "status3": "过期"
+        	, "status4": "交易失败"
+        	, "trstMny": "交易金额"
+
+        }
+        , "snatch":{
+        	"title": "抢红包"
+            , "lable": "输入“红包口令”"
+            , "btn": "确认口令"
+            , "late": "红包已经发完"
+            , "expire": "过期"
+            , "veiewDetail": "查看领取详情"
+            , "popTtl": "口令红包"
+        }
 
         , "other": {
             "noNetwork": "没有网路连线"
+            , "downloadCnt": "“红包发币”只能在Dapp浏览器应用中使用，请先下载"
         }
     }
-    ,"tw": {
+     ,"tw": {
         "index":{
-            "title": "红包发币"
-            , "sub": "猎豹移动出品"
-            , "btn1": "抢红包"
-            , "btn2": "发红包"
+            "title": "紅包發幣"
+            , "sub": "獵豹移動出品"
+            , "btn1": "搶紅包"
+            , "btn2": "發紅包"
+            , "tryTip": "試試給大家發個紅包"
+            , "cardTitle": "“紅包發幣”是什麼？"
+            , "p1": "別名：區塊鏈上的虛擬貨幣紅包"
+            , "p2": "幣種：ETH "
+            , "p3": "玩法1：設定口令來發紅包給朋友"
+            , "p4": "玩法2：輸入指定口令來搶朋友的紅包"
+            , "p5": "小秘密：拼手氣紅包，人人都有機會搶到高金額"
+            , "share": "生成圖片分享"
+            , "shareTip": "揪朋友發紅包"
+            , "recordTip": "查看發送紀錄"
         }
         , "send": {
             "msg1": "您的金額不夠付搶紅包所需的交易費"
             , "msg2": "這個口令已經被使用，換一個吧"
-            , "msg3": "最多輸入1000 ETH"
-            , "msg4": "最多發送500個"
+            , "msg3": "最多輸入"
+            , "msg4": "最多發送"
             , "msg5": "只能輸入中文、英文和數字"
             , "msg6": "最少輸入6個字"
             , "msg7": "最多輸入20字"
@@ -91,8 +187,40 @@
             , "countDes": "部分將用來支付搶紅包交易費"
 
         }
+        , "record": {
+        	"title": "發送紀錄"
+        	, "status1": "搶紅包中"
+        	, "status2": "已搶完"
+        	, "status3": "過期"
+        	, "status4": "交易失敗"
+        	, "trstMny": "交易金額"
+
+        }
+        , "detail": {
+        	"title": "領取詳情"
+        	, "titleSend": "發紅包詳情"
+        	, "des": "已搶到紅包，稍等交易建立可在錢包查看"
+        	, "dt": "已領取<span class=\"curCount\"></span>\\<span class=\"allCount\"></span>個，共<span class=\"curMoney\"></span>\\<span class=\"allMoney\"></span> ETH"
+        	, "lucky": "手氣最佳"
+        	, "me": "我"
+        	, "btm1": "未領取的紅包將於24小時後發起退款"
+        	, "btm2": "過期未被領取的紅包將退款"
+        	, "msg1": "還沒有人搶紅包"
+        	, "msg2": "無法搶紅包。由於交易費上漲，使預留的交易費不足以支付搶紅包"
+
+        }
+        , "snatch": {
+        	 "title": "搶紅包"
+            , "lable": "輸入“紅包口令”"
+            , "btn": "確認口令"
+            , "late": "紅包已經發完"
+            , "expire": "過期"
+            , "veiewDetail": "查看領取詳情"
+            , "popTtl": "口令紅包"
+        }
         , "other": {
             "noNetwork": "沒有網路連線"
+            , "downloadCnt": "“紅包發幣”只能在Dapp瀏覽器app中使用，請先下載"
         }
     }
 }
