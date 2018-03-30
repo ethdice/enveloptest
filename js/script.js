@@ -5,7 +5,7 @@ var M = {
     , isLoadingRecord: false//是否还在请求
     , record :  null
     , timerToast: null
-    , curLang: 'zh'
+    , curLang: 'en'
     , lang: {}
     , iosNet: false
 
@@ -17,7 +17,6 @@ var M = {
     }
     , iosNetStatus: function(isReached){
         M.iosNet = isReached;
-
     }
     , iosWalletAddress: function(str){
         M.walletAddr = str;
@@ -121,13 +120,24 @@ var M = {
             return 0;
         }
     }
+
+    , iosPhoneLanguage: function(strLanguage){
+        M.curLang = strLanguage;
+        alert(M.curLang);
+    }
     , getLang: function(){
         if(M.isInDapp()){
             return RedEnvelopeHost.getMobileLanguage();
         }else if(M.isInIosDapp()){
-            return 'zh';
+            return M.curLang;
         }
         return 'zh';
+    }
+    , loading: function(){
+        //如果不是从chat进入的显示loading
+        if(!$('body').hasClass('chat')){
+            $('.toast').html('正在生成分享图，请稍等...').show();
+        }
     }
     , isHasNetwork: function(){
         if(M.isInDapp()){
@@ -217,10 +227,14 @@ var M = {
                             M.jumpUrl('detail.html?word='+encodeURIComponent(word));
                             //是否从chat进入
                             if($('body').hasClass('chat')){
-                                RedEnvelopeHost.onBackToRedEnvelope();
+                                if(M.isInDapp()){
+                                    RedEnvelopeHost.onBackToRedEnvelope();
+                                }
                             }
                         }else if(data.ret == 10004){ //no such red packet
+
                             M.showToast(data.msg);
+
                         }else if(data.ret == 10005){//late
                             $('.pop-envelope .view-detail').attr('url', 'detail.html?word='+encodeURIComponent(word));
                             $('.pop-envelope').addClass('late').show();
@@ -228,7 +242,9 @@ var M = {
                             M.jumpUrl('detail.html?word='+encodeURIComponent(word));
                             //是否从chat进入
                             if($('body').hasClass('chat')){
-                                RedEnvelopeHost.onBackToRedEnvelope();
+                                if(M.isInDapp()){
+                                    RedEnvelopeHost.onBackToRedEnvelope();
+                                }
                             }
                         }else {
                             M.showToast(data.msg)
@@ -936,7 +952,7 @@ var M = {
         $('.sub-des').html(M.lang[M.curLang]['index']['sub']);
         $('.btn-snatch').html(M.lang[M.curLang]['index']['btn1']);
         $('.btn-send').html(M.lang[M.curLang]['index']['btn2']);
-        $('.btn-generate').html(M.lang[M.curLang]['index']['share']);
+        $('.btn-generate').text(M.lang[M.curLang]['index']['share']);
         $('.tip-try').html(M.lang[M.curLang]['index']['tryTip']);
         $('.tip-record').html(M.lang[M.curLang]['index']['recordTip']);
         $('.tip-share').html(M.lang[M.curLang]['index']['shareTip']);
@@ -991,20 +1007,25 @@ var M = {
         try{
             M.getWalletAddr();
             if(M.isInIosDapp()){
+                //network
                 window.webkit.messageHandlers.netStatus.postMessage({indexName:'net'});
+                //lang
+                window.webkit.messageHandlers.phoneLanguage.postMessage({indexName:'lan'});
             }
-            M.curLang = M.getLang();
 
         }catch(e){ alert(e)}        
 
-        if(M.curLang.indexOf('zh_CN')>-1){
-            M.curLang = 'zh';
-        }else if(M.curLang.indexOf('zh_TW')>-1 || M.curLang.indexOf('zh_HK')>-1 ||　M.curLang.indexOf('zh_MO')>-1){
-            M.curLang = 'tw';
-        }else if(M.curLang.indexOf('en')>-1){
-            M.curLang = 'en';
+
+        if(M.isInDapp()){
+            if(M.curLang.indexOf('zh_CN')>-1){
+                M.curLang = 'zh';
+            }else if(M.curLang.indexOf('zh_TW')>-1 || M.curLang.indexOf('zh_HK')>-1 ||　M.curLang.indexOf('zh_MO')>-1){
+                M.curLang = 'tw';
+            }else if(M.curLang.indexOf('en')>-1){
+                M.curLang = 'en';
+            }
         }
-        // M.curLang = 'en';
+        
 
         $.ajax({
             url: 'js/lang.json'
@@ -1012,6 +1033,27 @@ var M = {
             , success: function(data){
                 M.lang = data;
                 // alert(M.walletAddr)
+
+                if(M.curLang == '') {
+                    M.curLang = M.getLang();
+                }
+                alert('init:'+M.curLang)
+
+                if(M.isInIosDapp()){
+                    if(M.curLang == 'cn'){
+                        M.curLang = 'zh';
+                    }else if(M.curLang == 'cns'){
+                        M.curLang = 'tw';
+                    }else if(M.curLang.indexOf('en')>-1){
+                        M.curLang = 'en';
+                    }else{
+                        M.curLang = 'en';//默认英文
+                    }
+                }
+                
+                // M.curLang = 'en';
+
+
                 M.bind();
 
                 if($('body').hasClass('send')){
