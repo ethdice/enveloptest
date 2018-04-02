@@ -26,7 +26,7 @@
             , "msg7": "Password must not exceed 20 characters"
             , "msg8": "Please make sure each packets' minimum amount is 0.0001 ETH or more"
             , "title": "Send Coin Packet"
-            , "money": "Total"
+            , "money": "Amount"
             , "moneyDes": "Random amount"
             , "count": "Quantity"
             , "countPlh": "Enter amount"
@@ -35,7 +35,7 @@
             , "commandDes": "A password is required to open coin packets"
             , "btn": "PREPARE COIN PACKET"
             , "tip": "Coin packets that are not opened within 24 hours will be refunded"
-            , "countDes": "Gas fee needed for grabbing packet"
+            , "countDes": "Including gas fee needed for grabbing packets"
         }
         , "record": {
         	"title": "Sent History"

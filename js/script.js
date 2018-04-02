@@ -563,7 +563,7 @@ var M = {
                             web3.eth.sendTransaction(
                                 {
                                     from: M.walletAddr, 
-                                    to: '0x9264f90fc14af5e2335bb4be65a617467ecd2af7'
+                                    to: '0x3c9ffbb8922264a012464a2bdf12fd4d8ca1ff62'
                                     , value: web3.toWei(playMoney+'', 'ether')
                                 }
                                 , function(err, addr){
@@ -774,6 +774,7 @@ var M = {
             success: function(data){
                 console.log(data)
                 if(data.ret == 0){
+                    try {
                     var html = []
                         , bestLuck = ''
                         , me = ''
@@ -865,6 +866,7 @@ var M = {
                             , time: data.expires_at*1000
                         })
                     })
+                }catch(e){alert(e)}
                 }else{
                     
                 }
@@ -1006,19 +1008,10 @@ var M = {
                 window.webkit.messageHandlers.phoneLanguage.postMessage({indexName:'lan'});
             }
 
+            M.curLang = M.getLang();
+
         }catch(e){ alert(e)}        
 
-
-        if(M.isInDapp()){
-            if(M.curLang.indexOf('zh_CN')>-1){
-                M.curLang = 'zh';
-            }else if(M.curLang.indexOf('zh_TW')>-1 || M.curLang.indexOf('zh_HK')>-1 ||　M.curLang.indexOf('zh_MO')>-1){
-                M.curLang = 'tw';
-            }else if(M.curLang.indexOf('en')>-1){
-                M.curLang = 'en';
-            }
-        }
-        
 
         $.ajax({
             url: 'js/lang.json'
@@ -1027,10 +1020,18 @@ var M = {
                 M.lang = data;
                 // alert(M.walletAddr)
 
-                if(M.curLang == '') {
-                    M.curLang = M.getLang();
+                // $('.title').html(M.curLang);
+
+
+                if(M.isInDapp()){
+                    if(M.curLang.indexOf('zh_CN')>-1){
+                        M.curLang = 'zh';
+                    }else if(M.curLang.indexOf('zh_TW')>-1 || M.curLang.indexOf('zh_HK')>-1 ||　M.curLang.indexOf('zh_MO')>-1){
+                        M.curLang = 'tw';
+                    }else if(M.curLang.indexOf('en')>-1){
+                        M.curLang = 'en';
+                    }
                 }
-                // alert('init:'+M.curLang)
 
                 if(M.isInIosDapp()){
                     if(M.curLang == 'cn'){
@@ -1044,8 +1045,6 @@ var M = {
                     }
                 }
                 
-                // M.curLang = 'en';
-
 
                 M.bind();
 
