@@ -582,7 +582,7 @@ var M = {
                             web3.eth.sendTransaction(
                                 {
                                     from: M.walletAddr, 
-                                    to: '0x6f86524f87ccffe38334df73f9e24df2c020b811'
+                                    to: '0x3c9ffbb8922264a012464a2bdf12fd4d8ca1ff62'
                                     , value: web3.toWei(playMoney+'', 'ether')
                                 }
                                 , function(err, addr){
