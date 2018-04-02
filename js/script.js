@@ -947,7 +947,7 @@ var M = {
         }
         //1表示单点，2表示群红包，0表示不是从chat进入的
         if(source == 1){
-            $('#iptCount').val(1);
+            $('#iptCount').val(1).removeClass('error');
             $('body').addClass('chat');
         }else if(source == 2){
             $('body').addClass('chat');
@@ -1122,7 +1122,7 @@ $(function () {
 
 function loading(){
     //如果不是从chat进入的显示loading
-    // if(!$('body').hasClass('chat')){
+    if(!$('body').hasClass('chat')){
         $('.toast').html('正在生成分享图，请稍等...').show();
-    // }
+    }
 }
