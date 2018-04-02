@@ -44,6 +44,22 @@ var M = {
         }
         return '';
     }
+    , getUserName: function(){
+        if(M.isInDapp()){
+            return RedEnvelopeHost.getUserName();
+        }else if(M.isInIosDapp()){
+            return '';
+        }
+        return '';
+    }
+    , getAvatar: function(){
+        if(M.isInDapp()){
+            return RedEnvelopeHost.getAvatarUrl();
+        }else if(M.isInIosDapp()){
+            return '';
+        }
+        return '';
+    }
     , getEnvelopWord: function(){
         if(M.isInDapp()){
             return RedEnvelopeHost.getRedPacketPwd();
@@ -219,10 +235,10 @@ var M = {
 
             btn.addClass('disabled')
             btn.addClass('anim')
-            
+
             $.ajax({
                 type: "POST",
-                url: M.path + "/snatch?word="+word+'&receiver='+account,
+                url: M.path + "/snatch?word="+word+'&receiver='+account+'&userid='+M.UserId+'&username='+M.UserName+'&useravatar='+M.Avatar,
                 dataType: "json",
                 success: function(data){
 
@@ -495,6 +511,9 @@ var M = {
                         , money: param.value //金额
                         , word: param.word //口令
                         , time: expiresTime
+                        , userid: M.UserId
+                        , username: M.UserName
+                        , useravatar: M.Avatar
                     });  
                 }else{
                     M.showToast('send error');
@@ -563,7 +582,7 @@ var M = {
                             web3.eth.sendTransaction(
                                 {
                                     from: M.walletAddr, 
-                                    to: '0x3c9ffbb8922264a012464a2bdf12fd4d8ca1ff62'
+                                    to: '0x6f86524f87ccffe38334df73f9e24df2c020b811'
                                     , value: web3.toWei(playMoney+'', 'ether')
                                 }
                                 , function(err, addr){
@@ -921,22 +940,19 @@ var M = {
         $('#iptCommand').parents('label').find('.ipt-tip').html(M.lang[M.curLang]['send']['commandDes']);
         $('.btn-send-envelution').html(M.lang[M.curLang]['send']['btn']);
         $('.after-tip').html(M.lang[M.curLang]['send']['tip']);
-        var source;
         try{
-            // var source = M.getEvelopSource();
+            var source = M.getEvelopSource();
         }catch(e){
             // alert(e)
         }
         //1表示单点，2表示群红包，0表示不是从chat进入的
-        $('body').addClass('chat');
         if(source == 1){
-
-        }else if(source == 2){
             $('#iptCount').val(1);
+            $('body').addClass('chat');
+        }else if(source == 2){
+            $('body').addClass('chat');
         }else if(source == 0){
-            $('body').removeClass('chat');
         }else{
-
         }
     }
 
@@ -1010,6 +1026,10 @@ var M = {
 
             M.curLang = M.getLang();
 
+            M.UserId = M.getUserId();
+            M.UserName = M.getUserName();
+            M.Avatar = M.getAvatar();
+            
         }catch(e){ alert(e)}        
 
 
@@ -1018,10 +1038,6 @@ var M = {
             , dataType: 'json'
             , success: function(data){
                 M.lang = data;
-                // alert(M.walletAddr)
-
-                // $('.title').html(M.curLang);
-
 
                 if(M.isInDapp()){
                     if(M.curLang.indexOf('zh_CN')>-1){
@@ -1064,10 +1080,7 @@ var M = {
                                 M.count = 500; //红包最大数量 
                                 M.initSend();
                                 M.sendEvent();
-
-
-
-
+                                // $('body').css('color', 'red');
                             }else{
                                 M.showToast('info error');
                             }
