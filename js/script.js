@@ -36,6 +36,34 @@ var M = {
             $('html').addClass('ios')
         }
     }
+    , getInfoc: function(){
+        //ver mcc cn xaid  osver
+
+        //dappstore_red_packet_page_click:133 page:byte
+        //dappstore_red_packet_page_im:132 page:byte
+
+        var ua = navigator.userAgent;
+
+
+        // var infocUrl = 'http://helpdappstore1.ksmobile.com/',
+        // infocParams = {
+        //     ver: , 
+        //     mcc: , 
+        //     cn: ,
+        //     xaid: ,
+        //     osver: '', 
+        //     mnc: 0, //网络id
+        //     cl: (navigator.language || navigator.browserLanguage),//国家语言
+        //     cn2: ,//辅助渠道号
+        //     loc_time: new Date().getTime(),
+        //     brand: '',
+        //     model: '', 
+        //     romver: ''//rom版本号 
+        // },
+
+        // infoc = new Infoc(infocUrl, infocParams);
+
+    }
     , getUserId: function(){
         if(M.isInDapp()){
             return RedEnvelopeHost.getUserId();
@@ -238,7 +266,7 @@ var M = {
 
             $.ajax({
                 type: "POST",
-                url: M.path + "/snatch?word="+word+'&receiver='+account+'&userid='+M.UserId+'&username='+M.UserName+'&useravatar='+M.Avatar,
+                url: M.path + "/snatch?word="+word+'&receiver='+account+'&userid='+M.UserId+'&username='+M.UserName+'&avatar='+M.Avatar,
                 dataType: "json",
                 success: function(data){
 
@@ -511,9 +539,6 @@ var M = {
                         , money: param.value //金额
                         , word: param.word //口令
                         , time: expiresTime
-                        , userid: M.UserId
-                        , username: M.UserName
-                        , useravatar: M.Avatar
                     });  
                 }else{
                     M.showToast('send error');
@@ -596,7 +621,9 @@ var M = {
                                         param.guid = web3.sha3( M.walletAddr+(new Date().getTime()));
                                         param.transaction_id = addr;
                                         param.sender = M.walletAddr;
-
+                                        param.userid = M.UserId;
+                                        param.username = M.UserName;
+                                        param.avatar = M.Avatar;
                                         M.sendToBehide(param);
                                  
                                     }
@@ -803,9 +830,19 @@ var M = {
                         , isOver = false//是否抢完
                         , isMe = false //抢红包中的人是否有我
                         , count = data.data.info.count
+                        , senderName = ''
+                        , senderAvatar = 'images/sendAdva.png'
                         ;
 
-                    $('.head .addr').html(M.formatAddr(senderAddr));
+                    // $('.head .addr').html(M.formatAddr(senderAddr));
+                    senderName = data.data.info.username;
+                    if(senderName == ''){
+                        senderName = M.formatAddr(senderAddr);
+                    }
+                    senderAvatar = data.data.info.avatar;
+                    $('.head .addr').html(senderName);
+                    $('.head .adva img').attr('src', senderAvatar);
+
                     if(M.walletAddr == senderAddr){
                         isSender = true;
                     }
@@ -816,6 +853,11 @@ var M = {
 
                     $('.head .sub').html('“'+ data.data.info.word +'”');
                     html.push('<dt>'+ M.lang[M.curLang]['detail']['dt'] +'</dt>');
+
+                    var username = ''
+                        , userid = ''
+                        , avatar = ''
+                        ;
                     
                     $.each(data.data.records, function(i, ele){
                         if(data.data.records.length != 1 && ele.best_luck) {
@@ -837,10 +879,23 @@ var M = {
                             }
                         }
                         curVal += ele.value;
+
+                        username = ele.username;
+                        userid = ele.userid;
+                        avatar = ele.avatar;
+
+                        if(username == ''){
+                            username = M.formatAddr(ele.receiver);
+                        }
+
+                        if(avatar == ''){
+                            avatar = 'images/default.png';
+                        }
+
                         html.push('<dd>'+
-                            '<img src="images/default.png ">'+
+                            '<img src="'+ avatar +'">'+
                             '<div class="info">'+
-                            '<div class="addr">'+ me + M.formatAddr(ele.receiver) +'</div>'+
+                            '<div class="addr">'+ me + username +'</div>'+
                             '<div class="time">'+ ele.created_at +'</div>'+
                             '</div>'+
                             '<div class="money">'+
