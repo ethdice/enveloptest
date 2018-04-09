@@ -8,9 +8,11 @@ var M = {
     , curLang: 'en'
     , lang: {}
     , iosNet: false
-
+    , myInfoc: null
     , isInDapp: function(){
-        return (navigator.userAgent.indexOf('inDapp')>-1);
+        try{
+        	return (RedEnvelopeHost.isInDappAndroid() == 1);
+        }catch(e){}
     }
     , isInIosDapp: function(){
         return (navigator.userAgent.indexOf('inIosDapp')>-1);
@@ -22,48 +24,56 @@ var M = {
         M.walletAddr = str;
     }
     , getWalletAddr: function(){
-        // M.walletAddr = '0x7fec28c6c1dd271830c8f2ba77dd15f987bbd329';
-        // M.walletAddr = '0xf858f42b162bb1ef0c5d99b32b28f3b00b124170';
+        M.walletAddr = '0x7fec28c6c1dd271830c8f2ba77dd15f987bbd329';
+        M.walletAddr = '0xf858f42b162bb1ef0c5d99b32b28f3b00b124170';
         if(M.isInDapp()){
             M.walletAddr = RedEnvelopeHost.getWalletAddress();
-            $('html').addClass('android')
+            $('html').addClass('android');
         }else if(M.isInIosDapp()){
             if($('body').hasClass('index')){
                 window.webkit.messageHandlers.h5Callback.postMessage({indexName:'address'});
             }else{
                 window.webkit.messageHandlers.sofaWalletAddress.postMessage({indexName:'address'});
             }
-            $('html').addClass('ios')
+            $('html').addClass('ios');
         }
     }
-    , getInfoc: function(){
+ /*   , getInfoc: function(){
         //ver mcc cn xaid  osver
 
         //dappstore_red_packet_page_click:133 page:byte
         //dappstore_red_packet_page_im:132 page:byte
 
         var ua = navigator.userAgent;
+        var str = ua.split('$&*')[1];
+        if(str != undefined){
+            str = str.split(';')[0].replace(/:/g, '=').replace(/\//g, '&');
+        }
+
+        str = '?'+str;
+
+        var infocUrl = 'http://helpdappstore1.ksmobile.com',
+        infocParams = {
+            ver: M.getParameter('ver', str), 
+            mcc: M.getParameter('mcc', str), 
+            cn: M.getParameter('cn', str),
+            xaid: M.getParameter('xaid', str),
+            osver: M.getParameter('osver', str), 
+            mnc: 0, //网络id
+            cl: (navigator.language || navigator.browserLanguage),//国家语言
+            cn2: '',//辅助渠道号
+            loc_time: 1,
+            brand: '',
+            model: '', 
+            romver: '',//rom版本号 
+            adid:'',
+            apilevel:23
+        };
+
+        return (new Infoc(infocUrl, infocParams));
 
 
-        // var infocUrl = 'http://helpdappstore1.ksmobile.com/',
-        // infocParams = {
-        //     ver: , 
-        //     mcc: , 
-        //     cn: ,
-        //     xaid: ,
-        //     osver: '', 
-        //     mnc: 0, //网络id
-        //     cl: (navigator.language || navigator.browserLanguage),//国家语言
-        //     cn2: ,//辅助渠道号
-        //     loc_time: new Date().getTime(),
-        //     brand: '',
-        //     model: '', 
-        //     romver: ''//rom版本号 
-        // },
-
-        // infoc = new Infoc(infocUrl, infocParams);
-
-    }
+    }*/
     , getUserId: function(){
         if(M.isInDapp()){
             return RedEnvelopeHost.getUserId();
@@ -107,9 +117,13 @@ var M = {
 
             $('body').append(html);
 
-            $('.btn-cancel').click(function(){
-                $('.dialog').hide();
-            })
+            // M.myInfoc.report({
+            //     page: 7
+            //     , dappstore_red_packet_page_im:132
+            // });
+            
+
+            
         }
     }
     , jumpUrl: function(url){
@@ -119,7 +133,7 @@ var M = {
                 RedEnvelopeHost.onBackToRedEnvelope();
             }else{
                 if(!M.isHasNetwork()){
-                    M.showToast(M.lang[M.curLang]['other']['noNetwork'])
+                    M.showToast(M.lang[M.curLang]['other']['noNetwork']);
                     return;
                 }
                 RedEnvelopeHost.jumpToEnvelope(url);
@@ -129,7 +143,7 @@ var M = {
                 window.webkit.messageHandlers.sofaH5Callback.postMessage({indexName: url});
             }else{
                 if(!M.isHasNetwork()){
-                    M.showToast(M.lang[M.curLang]['other']['noNetwork'])
+                    M.showToast(M.lang[M.curLang]['other']['noNetwork']);
                     return;
                 }
                 window.webkit.messageHandlers.h5Callback.postMessage({indexName: url});
@@ -138,7 +152,7 @@ var M = {
     }
     , shareImg: function(obj){
         if(!M.isHasNetwork()){
-            M.showToast(M.lang[M.curLang]['other']['noNetwork'])
+            M.showToast(M.lang[M.curLang]['other']['noNetwork']);
             return;
         }
         if(M.isInDapp()){
@@ -162,6 +176,7 @@ var M = {
         }
     }
     , getEvelopSource: function(){
+        try{
         if(M.isInDapp()){
             return RedEnvelopeHost.getRedPacketSource();
         }else if(M.isInIosDapp()) {
@@ -169,6 +184,7 @@ var M = {
         }else{
             return 0;
         }
+        }catch(e){}
     }
 
     , iosPhoneLanguage: function(strLanguage){
@@ -197,7 +213,33 @@ var M = {
         }
         return true;
     }
+    , encodeParam: function(param){
+        if(M.isInDapp()){
+            return RedEnvelopeHost.encryptBody(param);
+        }else if(M.isInIosDapp()){
+            return param;
+        }
+        return param;
+    }
     , bind: function(){
+        // $('.btn-send, .btn-snatch, .tip-record, .btn-generate, .snatch .btn-confirm-pw, .send .btn-send-envelution, .detail .btn-share').click(function(){
+        //     // M.myInfoc.report({
+        //     //     page: $('this').attr('page')
+        //     //     , dappstore_red_packet_page_click:133
+        //     // });
+        // })
+
+        $('body').on('.dialog .btn-cancel', 'click', function(){
+            $('.dialog').hide();
+        })
+
+        $('body').on('.btn-ok', 'click', function(){
+            // M.myInfoc.report({
+            //     page: 8
+            //     , dappstore_red_packet_page_click:133
+            // });
+        })
+
 
         $('.btn-send').click(function(){
             M.isDownload();
@@ -264,9 +306,21 @@ var M = {
             btn.addClass('disabled')
             btn.addClass('anim')
 
+            param = {
+                word: word,
+                receiver: account,
+                userid: M.UserId,
+                username: M.UserName,
+                avatar: M.Avatar
+            }
+
+            var strParam = M.encodeParam(JSON.stringify(param));
+
+
             $.ajax({
                 type: "POST",
-                url: M.path + "/snatch?word="+word+'&receiver='+account+'&userid='+M.UserId+'&username='+M.UserName+'&avatar='+M.Avatar,
+                url: M.path + "/snatch",
+                data: {'data':strParam},
                 dataType: "json",
                 success: function(data){
 
@@ -320,7 +374,13 @@ var M = {
 
         $('.pop-close').click(function(){
             // alert('generate image');
-            $('.pop-envelope').removeClass('late').hide();
+            if($('body').hasClass('chat')){
+                if(M.isInDapp()){
+                    RedEnvelopeHost.onBackToRedEnvelope();
+                }
+            }else{
+                $('.pop-envelope').removeClass('late expire').hide();
+            }
 
         })
         if($('#iptCount').length > 0){
@@ -439,11 +499,13 @@ var M = {
         $('.loading').show();
         var word = $('.snatch textarea[name=command]').val()
             , btn = $('.btn')
+            , strParam = M.encodeParam(JSON.stringify({'word':word, 'receiver': M.walletAddr}))
             ;
 
         $.ajax({
             type: "POST",
-            url: M.path + "/checkWord?word="+word+'&receiver='+M.walletAddr,
+            url: M.path + "/checkWord",
+            data: {'data':strParam},
             dataType: "json",
             success: function(data){
                 console.log(data)
@@ -525,10 +587,13 @@ var M = {
         
     }
     , sendToBehide: function(param){
+
+        var strParam = M.encodeParam(JSON.stringify(param));
+
         $.ajax({
             type: "POST",
             url: M.path + "/send",
-            data: param ,
+            data: {'data':strParam},
             dataType: "json",
             success: function(data){
                 console.log(data)
@@ -607,6 +672,7 @@ var M = {
                             web3.eth.sendTransaction(
                                 {
                                     from: M.walletAddr, 
+                                    // to: '0x9264f90fc14af5e2335bb4be65a617467ecd2af7'
                                     to: '0x3c9ffbb8922264a012464a2bdf12fd4d8ca1ff62'
                                     , value: web3.toWei(playMoney+'', 'ether')
                                 }
@@ -678,57 +744,6 @@ var M = {
     }
 
     
-    , initWeb3: function(callback){
-
-        // alert('init')
-        if (typeof web3 !== 'undefined') {
-            M.web3Provider = web3.currentProvider;
-        } else {
-            // M.web3Provider = new Web3.providers.HttpProvider('http://testethapi.ksmobile.net:8545');
-            M.web3Provider = new Web3.providers.HttpProvider('http://ropsten.infura.io/metamask');
-        }
-        web3 = new Web3(M.web3Provider);
-
-        $.getJSON('js/RedEnvelope.json?v=5', function(data) {
-           
-            var randomHash = web3.sha3( M.walletAddr+(new Date().getTime()));
-           
-            var AdoptionArtifact = data;
-            
-            // alert(1)
-            //ios
-            M.Contract = web3.eth.contract(AdoptionArtifact.abi).at("0x45ee3442a5594fa14c072e3dce0792dec5b48006");
-            // var MyContract = web3.eth.contract(AdoptionArtifact.abi).at("0xfb0b8970a3f51b6ba30993e876fc3c3dfe8f87f2");
-            M.walletAddr = web3.eth.accounts[0];
-            callback(M.Contract, M.walletAddr)
-           
-
-
-        });
-            
-    }
-    , createPackage: function( contract, playMoney, callback ) {
-        var randomHash = web3.sha3( M.walletAddr+(new Date().getTime()));
-        // alert(33333333333)
-        M.Contract.createPackage.sendTransaction(randomHash, {from: M.walletAddr,value:web3.toWei(playMoney+'', 'ether')}, function(r, data){
-            // console.log(r);
-            console.log(data);
-                if(data != undefined){
-                    callback(1, {
-                        randomHash: randomHash
-                        , transactionHash: data
-                    });
-                }else{
-                    callback(0, {
-                        randomHash: randomHash
-                        , transactionHash: data
-                    });
-                }
-                
-               
-        })
-        
-    }
     , sortList : function(list){
         list.sort(function(x, y){
             return (new Date(y.created_at)) - (new Date(x.created_at));
@@ -809,8 +824,8 @@ var M = {
         var param = {
             offset: 0
             , count : 50
-            , word: M.getParameter('word')
-            , guid: M.getParameter('guid')
+            , word: M.getParameter('word', window.location.search)
+            , guid: M.getParameter('guid', window.location.search)
         }
         $.ajax({
             type: "POST",
@@ -857,6 +872,7 @@ var M = {
                     var username = ''
                         , userid = ''
                         , avatar = ''
+                        , page = 0
                         ;
                     
                     $.each(data.data.records, function(i, ele){
@@ -911,12 +927,19 @@ var M = {
                     // html.push('<dt>已领取'+ data.data.records.length +'/'+ data.data.info.count +'个  共<span></span>/'+ data.data.info.total_value +'ETH</dt>');
 
                     if(isSender){
+                        page = 6;
                         $('.head .ttl').html(M.lang[M.curLang]['detail']['titleSend']);
                         $('.wrap').addClass('detail-sender');
                     }else{
+                        page = 3;
                         $('.head .ttl').html(M.lang[M.curLang]['detail']['title']);
                         $('.wrap').removeClass('detail-sender');
                     }
+
+                    // M.myInfoc.report({
+                    //     page: page
+                    //     , dappstore_red_packet_page_im:132
+                    // });
 
                     //非自己发的红包，并且被别人抢完了，点击查看领取详情，头部应显示红包总额
                     if((!isSender && isOver && !isMe) || isSender){
@@ -952,7 +975,6 @@ var M = {
                     if($('dt').length>0){
                         listHeight = $('.list').height();
                     }
-                    console.log(listHeight)
                     $('.no-transition').height($(window).height()-$('.head').height()-listHeight);
                     $('.no-transition').css('top', listHeight).show();
                 }else{
@@ -968,9 +990,9 @@ var M = {
         return addr.substr(0,8) + '...' + addr.substr(-8,8)
 
     }
-    , getParameter: function(name) {  
+    , getParameter: function(name,url) {  
         var reg = new RegExp("(^|&)" + name + "=([^&]*)(&|$)", "i");  
-        var r = window.location.search.substr(1).match(reg);  
+        var r = url.substr(1).match(reg);  
 
         if (r != null)  
             // console.log(r[2]);
@@ -995,11 +1017,9 @@ var M = {
         $('#iptCommand').parents('label').find('.ipt-tip').html(M.lang[M.curLang]['send']['commandDes']);
         $('.btn-send-envelution').html(M.lang[M.curLang]['send']['btn']);
         $('.after-tip').html(M.lang[M.curLang]['send']['tip']);
-        try{
-            var source = M.getEvelopSource();
-        }catch(e){
-            // alert(e)
-        }
+        
+        var source = M.getEvelopSource();
+       
         //1表示单点，2表示群红包，0表示不是从chat进入的
         if(source == 1){
             $('#iptCount').val(1).removeClass('error');
@@ -1040,18 +1060,28 @@ var M = {
         $('.view-detail').text(M.lang[M.curLang]['snatch']['veiewDetail']);
 
 
-        // alert(M.getUserId())
         var word = '';
         try{
             word = M.getEnvelopWord();
         }catch(e){
-            // alert(e)
         }
         if(word != ''){
             $('#iptCommand').val(word).removeClass('error');
             $('.pop-envelope').show();
             M.checkEnvelopStatus();
             $('body').addClass('chat');
+        }
+
+
+        var source = M.getEvelopSource();
+       
+        //1表示单点，2表示群红包，0表示不是从chat进入的
+        if(source == 1){
+            $('body').addClass('chat');
+        }else if(source == 2){
+            $('body').addClass('chat');
+        }else if(source == 0){
+        }else{
         }
     }
 
@@ -1085,7 +1115,11 @@ var M = {
             M.UserName = M.getUserName();
             M.Avatar = M.getAvatar();
             
-        }catch(e){ alert(e)}        
+
+            // M.myInfoc = M.getInfoc();
+            // alert(M.myInfoc)
+
+        }catch(e){}        
 
 
         $.ajax({
@@ -1093,7 +1127,7 @@ var M = {
             , dataType: 'json'
             , success: function(data){
                 M.lang = data;
-
+                try{
                 if(M.isInDapp()){
                     if(M.curLang.indexOf('zh_CN')>-1){
                         M.curLang = 'zh';
@@ -1115,12 +1149,15 @@ var M = {
                         M.curLang = 'en';//默认英文
                     }
                 }
-                
+                }catch(e){}
 
                 M.bind();
 
+                var page = 1;
+
                 if($('body').hasClass('send')){
-                    // M.initWeb3(M.sendEvent);
+                    page = 4;
+                    
                     $.ajax({
                         type: "POST",
                         url: M.path + "/info",
@@ -1135,7 +1172,6 @@ var M = {
                                 M.count = 500; //红包最大数量 
                                 M.initSend();
                                 M.sendEvent();
-                                // $('body').css('color', 'red');
                             }else{
                                 M.showToast('info error');
                             }
@@ -1143,30 +1179,37 @@ var M = {
                     });
 
                 }else if($('body').hasClass('record')){
+                    page = 5;
                     M.initRecord();
                     M.getRecord();
                 }else if($('body').hasClass('snatch')){
+                    page = 2;
                     M.initSnatch();
                 }else if($('body').hasClass('detail')){
+                    // page = 3;//抢红包
+                    // page = 6;//发红包
                     M.initDetail();
                     M.getDetail();
                 }else if($('body').hasClass('index')){
+                    page = 1;
                     M.initIndex();
                     M.getRecord();
-                } 
+                }
+
+                if(!$('body').hasClass('detail')){
+                    // M.myInfoc.report({
+                    //     page: page
+                    //     , dappstore_red_packet_page_im:132
+                    // });
+                }
+
+                    
             }
             , error: function(err){
                 console.log(err.msg)
             }
         })
- 
-
-
-
-            
-        
-        
-       
+  
     }
 
 }
@@ -1178,6 +1221,6 @@ $(function () {
 function loading(){
     //如果不是从chat进入的显示loading
     if(!$('body').hasClass('chat')){
-        $('.toast').html('正在生成分享图，请稍等...').show();
+        $('.toast').html(M.lang[M.curLang]['other']['shareImg']).show();
     }
 }

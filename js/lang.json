@@ -31,7 +31,7 @@
             , "count": "Quantity"
             , "countPlh": "Enter amount"
             , "countUnit": ""
-            , "commandPlh": "6-20 characters or numbers"
+            , "commandPlh": "Enter Password: 6-20 English/Chinese characters or numbers"
             , "commandDes": "A password is required to open coin packets"
             , "btn": "PREPARE COIN PACKET"
             , "tip": "Coin packets that are not opened within 24 hours will be refunded"
@@ -76,6 +76,7 @@
             , "downloadCnt": "\"Coin Packet\" is only supported in Dapp Browser. Please download it first."
             , "btnOk": "DOWNLOAD"
             , "btnCancel": "NOT NOW"
+            , "shareImg": "Generating image…"
         }
     }
     , "zh": {
@@ -110,7 +111,7 @@
             , "count": "红包数"
             , "countPlh": "填写个数"
             , "countUnit": "个"
-            , "commandPlh": "6-20字的中文，英文或数字"
+            , "commandPlh": "输入口令：6-20字的中文，英文或数字"
             , "commandDes": "抢红包必须输入以上口令"
             , "btn": "塞币进红包"
             , "tip": "未领取的红包将于24小时后发起退款"
@@ -157,6 +158,7 @@
             , "downloadCnt": "“红包发币”只能在Dapp浏览器应用中使用，请先下载"
             , "btnOk": "继续"
             , "btnCancel": "取消"
+            , "shareImg": "正在生成分享图，请稍等..."
         }
     }
      ,"tw": {
@@ -191,7 +193,7 @@
             , "count": "紅包數"
             , "countPlh": "填寫個數"
             , "countUnit": "個"
-            , "commandPlh": "6-20字的中文、英文或數字"
+            , "commandPlh": "輸入口令：6-20字的中文、英文或數字"
             , "commandDes": "搶紅包必須輸入以上口令"
             , "btn": "塞幣進紅包"
             , "tip": "未領取的紅包將於24小時後發起退款"
@@ -236,6 +238,7 @@
             , "downloadCnt": "“紅包發幣”只能在Dapp瀏覽器app中使用，請先下載"
             , "btnOk": "繼續"
             , "btnCancel": "取消"
+            , "shareImg": "正在生成分享圖..."
         }
     }
 }
