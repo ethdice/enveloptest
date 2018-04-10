@@ -24,8 +24,8 @@ var M = {
         M.walletAddr = str;
     }
     , getWalletAddr: function(){
-        M.walletAddr = '0x7fec28c6c1dd271830c8f2ba77dd15f987bbd329';
-        M.walletAddr = '0xf858f42b162bb1ef0c5d99b32b28f3b00b124170';
+        //M.walletAddr = '0x7fec28c6c1dd271830c8f2ba77dd15f987bbd329';
+        // M.walletAddr = '0xf858f42b162bb1ef0c5d99b32b28f3b00b124170';
         if(M.isInDapp()){
             M.walletAddr = RedEnvelopeHost.getWalletAddress();
             $('html').addClass('android');
@@ -38,7 +38,7 @@ var M = {
             $('html').addClass('ios');
         }
     }
- /*   , getInfoc: function(){
+    , getInfoc: function(){
         //ver mcc cn xaid  osver
 
         //dappstore_red_packet_page_click:133 page:byte
@@ -73,7 +73,7 @@ var M = {
         return (new Infoc(infocUrl, infocParams));
 
 
-    }*/
+    }
     , getUserId: function(){
         if(M.isInDapp()){
             return RedEnvelopeHost.getUserId();
@@ -117,10 +117,10 @@ var M = {
 
             $('body').append(html);
 
-            // M.myInfoc.report({
-            //     page: 7
-            //     , dappstore_red_packet_page_im:132
-            // });
+            M.myInfoc.report({
+                page: 7
+                , dappstore_red_packet_page_im:132
+            });
             
 
             
@@ -229,11 +229,11 @@ var M = {
         //     // });
         // })
 
-        $('body').on('.dialog .btn-cancel', 'click', function(){
+        $('html').on('click', '.dialog .btn-cancel', function(){
             $('.dialog').hide();
         })
 
-        $('body').on('.btn-ok', 'click', function(){
+        $('body').on('click', '.btn-ok', function(){
             // M.myInfoc.report({
             //     page: 8
             //     , dappstore_red_packet_page_click:133
@@ -499,7 +499,7 @@ var M = {
         $('.loading').show();
         var word = $('.snatch textarea[name=command]').val()
             , btn = $('.btn')
-            , strParam = M.encodeParam(JSON.stringify({'word':word, 'receiver': M.walletAddr}))
+            , strParam = M.encodeParam(JSON.stringify({'word':word, 'receiver': M.walletAddr, 'userid':M.UserId}))
             ;
 
         $.ajax({
@@ -598,7 +598,7 @@ var M = {
             success: function(data){
                 console.log(data)
                 if(data.ret == 0){
-                    var expiresTime = data.expires_at*1000;
+                    var expiresTime = data.data.expires_at*1000;
                     M.shareImg({
                         count: param.count //红包个数
                         , money: param.value //金额
@@ -647,7 +647,6 @@ var M = {
                 , word: word
                 , count: count
             }
-            // alert('send1')
 
             $.ajax({
                 type: "POST",
@@ -666,9 +665,23 @@ var M = {
                             , gasCount: gasLimit
                             , gasPrice: gasPrice
                         }
+
                         if (typeof web3 !== 'undefined') {
-                            // M.web3Provider = web3.currentProvider;
-                            // try{
+                            web3 = new Web3(web3.currentProvider);
+                        }else{
+                            web3 = new Web3(new Web3.providers.HttpProvider('https://ropsten.infura.io/metamask'));
+                            // if(!web3.isConnected())
+                            //     alert("not connected");
+                            // else
+                            //     alert("connected");
+                        }
+                           
+
+                        // alert(M.walletAddr);
+                        // alert(web3.eth.defaultAccount);
+
+    
+                        try{
                             web3.eth.sendTransaction(
                                 {
                                     from: M.walletAddr, 
@@ -678,12 +691,7 @@ var M = {
                                 }
                                 , function(err, addr){
                                     console.log(addr)
-                                    if(addr != undefined){
-                                        
-                                        if(!$('body').hasClass('chat')){
-                                            $('.toast').html('正在生成分享图，请稍等...').show();
-                                        }
-
+                                    if(addr != undefined){                                      
                                         param.guid = web3.sha3( M.walletAddr+(new Date().getTime()));
                                         param.transaction_id = addr;
                                         param.sender = M.walletAddr;
@@ -694,8 +702,7 @@ var M = {
                                  
                                     }
                             });
-                        // }catch(e){alert(e)}
-                        }
+                        }catch(e){alert(e)}
                         
                         
 
@@ -774,7 +781,7 @@ var M = {
             success: function(data){
                 console.log(data)
                 if(data.ret == 0){
-                    var html = [], status = '';
+                    var html = [], status = '', time = 0;
                     //判断首页是否显示查看记录
                     if(data.data.length > 0 && $('body').hasClass('index')){
                         $('.tip-box').addClass('show');
@@ -783,7 +790,6 @@ var M = {
 
                     $('.loading').remove();
                     var list = M.sortList(data.data);
-
 
                     $.each(data.data, function(i, ele){
                         if(ele.status == 13){//expire
@@ -799,10 +805,13 @@ var M = {
                         }else if(ele.status == 0){
                             status = '无效'
                         }
+                        time = new Date(ele.created_at*1000).toLocaleString();
                         html.push('<li>'+
                             '<a href="javascript:void(0)" url="detail.html?guid='+ ele.guid +'">'+
                             '<span class="mny">'+ M.lang[M.curLang]['record']['trstMny'] +'<i class="f-r">'+ ele.value + ' ETH</i></span>'+
-                            '<span class="time">'+ ele.created_at + '<i class="f-r">(包含交易费'+ ele.gasTotal.toFixed(5) +' ETH))</i></span>'+
+                            '<span class="time">'+ time + 
+                            // '<i class="f-r">(包含交易费'+ ele.gasTotal.toFixed(5) +' ETH))</i>'+
+                            '</span>'+
                             '<span class="status">'+ status +'</span>'+
                             '</a>'+'</li>');
                     })
@@ -840,7 +849,7 @@ var M = {
                         , bestLuck = ''
                         , me = ''
                         , curVal = 0
-                        , senderAddr = data.data.info.sender//发红包本人addr
+                        , senderAddr = data.data.info.userid//发红包本人userid
                         , isSender = false//是否是发红包本人
                         , isOver = false//是否抢完
                         , isMe = false //抢红包中的人是否有我
@@ -858,7 +867,7 @@ var M = {
                     $('.head .addr').html(senderName);
                     $('.head .adva img').attr('src', senderAvatar);
 
-                    if(M.walletAddr == senderAddr){
+                    if(M.UserId == senderAddr){
                         isSender = true;
                     }
                     if(data.data.records.length == data.data.info.count){
@@ -873,6 +882,7 @@ var M = {
                         , userid = ''
                         , avatar = ''
                         , page = 0
+                        , time = 0
                         ;
                     
                     $.each(data.data.records, function(i, ele){
@@ -881,13 +891,14 @@ var M = {
                         }else{
                             bestLuck = ''
                         }
-                        if(ele.receiver != M.walletAddr){
+                        if(ele.userid != M.UserId){
                             me = '';
                         }else{
                             me = '<i class="me">('+ M.lang[M.curLang]['detail']['me'] +')</i>';
                             isMe = true;
                         }
-                        if(ele.receiver == M.walletAddr){
+
+                        if(ele.userid == M.UserId){
                             if(isSender){
                                 $('.head .money .big').html(data.data.info.total_value);
                             }else{
@@ -907,12 +918,12 @@ var M = {
                         if(avatar == ''){
                             avatar = 'images/default.png';
                         }
-
+                        time = new Date(ele.created_at*1000).toLocaleString();
                         html.push('<dd>'+
                             '<img src="'+ avatar +'">'+
                             '<div class="info">'+
                             '<div class="addr">'+ me + username +'</div>'+
-                            '<div class="time">'+ ele.created_at +'</div>'+
+                            '<div class="time">'+ time +'</div>'+
                             '</div>'+
                             '<div class="money">'+
                             '<span>'+ ele.value.toFixed(4) +' ETH</span>'+ bestLuck +
@@ -936,10 +947,10 @@ var M = {
                         $('.wrap').removeClass('detail-sender');
                     }
 
-                    // M.myInfoc.report({
-                    //     page: page
-                    //     , dappstore_red_packet_page_im:132
-                    // });
+                    M.myInfoc.report({
+                        page: page
+                        , dappstore_red_packet_page_im:132
+                    });
 
                     //非自己发的红包，并且被别人抢完了，点击查看领取详情，头部应显示红包总额
                     if((!isSender && isOver && !isMe) || isSender){
@@ -1115,8 +1126,7 @@ var M = {
             M.UserName = M.getUserName();
             M.Avatar = M.getAvatar();
             
-
-            // M.myInfoc = M.getInfoc();
+            M.myInfoc = M.getInfoc();
             // alert(M.myInfoc)
 
         }catch(e){}        
@@ -1155,7 +1165,7 @@ var M = {
 
                 var page = 1;
 
-                if($('body').hasClass('send')){
+                if($('body').hasClass('send')){                    
                     page = 4;
                     
                     $.ajax({
@@ -1171,6 +1181,8 @@ var M = {
                                 M.unit = data.data.unit; //红包最小单位 
                                 M.count = 500; //红包最大数量 
                                 M.initSend();
+                                $('.loading').hide();
+                                $('body').removeClass('load');
                                 M.sendEvent();
                             }else{
                                 M.showToast('info error');
@@ -1197,10 +1209,10 @@ var M = {
                 }
 
                 if(!$('body').hasClass('detail')){
-                    // M.myInfoc.report({
-                    //     page: page
-                    //     , dappstore_red_packet_page_im:132
-                    // });
+                    M.myInfoc.report({
+                        page: page
+                        , dappstore_red_packet_page_im:132
+                    });
                 }
 
                     

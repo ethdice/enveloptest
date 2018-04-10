@@ -5,6 +5,8 @@ var gulp = require("gulp"),
     rename = require("gulp-rename"),
     clean = require("gulp-clean");
 
+var combiner = require('stream-combiner2');
+
 var less = require('gulp-less');
 var path = require('path');
 var deployPath_dev = "";
@@ -16,17 +18,21 @@ var deployPath = deployPath_dev;
 // 处理公共库
 // ------------------------------------------------------------
 gulp.task("minify-js-index", function() {
-    return gulp.src([
-            "js/jquery.min.js",
-            "js/web3.min.js",
-            "js/truffle-contract.js",
-            // "js/lang.js",
-            "js/script.js"
-        ])
-        .pipe(concat("script.min.js"))
-        .pipe(uglify())
-        .pipe(rename("script.min.js"))
-        .pipe(gulp.dest(deployPath+'js'));
+    // var combined = combiner.obj([
+    //     gulp.src([
+    //         // "js/jquery.min.js",
+    //         // "js/web3.min.js",
+    //         // "js/truffle-contract.js",
+    //         // "js/lang.js",
+    //         // "js/infoc.min.js"
+    //         // "js/script.js"
+    //     ])
+    //     .pipe(concat("script.min.js"))
+    //     .pipe(uglify())
+    //     .pipe(rename("script.min.js"))
+    //     .pipe(gulp.dest(deployPath+'js'));
+    // ]);
+    // return combined;
 });
 gulp.task("minify-css-index", function() {
     return gulp.src([
