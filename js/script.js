@@ -662,18 +662,13 @@ var M = {
                         if (typeof web3 !== 'undefined') {
                             web3 = new Web3(web3.currentProvider);
                         }else{
-                            web3 = new Web3(new Web3.providers.HttpProvider('https://ropsten.infura.io/metamask'));
+                            web3 = new Web3(new Web3.providers.HttpProvider('https://mainnet.infura.io/metamask'));
                             // if(!web3.isConnected())
                             //     alert("not connected");
                             // else
                             //     alert("connected");
                         }
-                           
-
-                        // alert(M.walletAddr);
-                        // alert(web3.eth.defaultAccount);
-
-    
+                               
                         try{
                             web3.eth.sendTransaction(
                                 {
