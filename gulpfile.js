@@ -18,8 +18,8 @@ var deployPath = deployPath_dev;
 gulp.task("minify-js-index", function(cb) {
     
     return gulp.src([
-            "js/jquery.min.js",
-            "js/infoc.min.js",
+            // "js/jquery.min.js",
+            // "js/infoc.min.js",
             "js/script.js"
         ])
         .pipe(concat("script.min.js"))

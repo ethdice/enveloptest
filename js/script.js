@@ -9,6 +9,7 @@ var M = {
     , lang: {}
     , iosNet: false
     , myInfoc: null
+    , userInfo: null
     , isInDapp: function(){
         try{
         	return (RedEnvelopeHost.isInDappAndroid() == 1);
@@ -74,11 +75,20 @@ var M = {
 
 
     }
+    , getIosUserInfo: function(){
+        try {
+            var type = "SJbridge";
+            var name = "currentUserInfo";
+            var payload = {type: type, functionName: name};
+
+            M.userInfo = prompt(JSON.stringify (payload));
+        } catch(err) {}
+    }
     , getUserId: function(){
         if(M.isInDapp()){
             return RedEnvelopeHost.getUserId();
         }else if(M.isInIosDapp()){
-            return '';
+            return M.userInfo.userid;
         }
         return '';
     }
@@ -86,7 +96,7 @@ var M = {
         if(M.isInDapp()){
             return RedEnvelopeHost.getUserName();
         }else if(M.isInIosDapp()){
-            return '';
+            return M.userInfo.name;
         }
         return '';
     }
@@ -94,7 +104,7 @@ var M = {
         if(M.isInDapp()){
             return RedEnvelopeHost.getAvatarUrl();
         }else if(M.isInIosDapp()){
-            return '';
+            return M.userInfo.avatar;
         }
         return '';
     }
@@ -180,7 +190,15 @@ var M = {
         if(M.isInDapp()){
             return RedEnvelopeHost.getRedPacketSource();
         }else if(M.isInIosDapp()) {
-            return 0;
+            try {
+                var type = "SJbridge";
+                var name = "getRedPacketSource";
+                var payload = {type: type, functionName: name};
+
+                var res = prompt(JSON.stringify (payload));
+                return res.fromIndex;
+            } catch(err) {}
+
         }else{
             return 0;
         }
@@ -217,7 +235,16 @@ var M = {
         if(M.isInDapp()){
             return RedEnvelopeHost.encryptBody(param);
         }else if(M.isInIosDapp()){
-            return param;
+
+            try {
+                var type = "SJbridge";
+                var name = "AESEncode";
+                var payload = {type: type, functionName: name, data: param};
+
+                var res = prompt(JSON.stringify (payload));
+                return res;
+            } catch(err) {}
+
         }
         return param;
     }
@@ -658,17 +685,12 @@ var M = {
                             , gasCount: gasLimit
                             , gasPrice: gasPrice
                         }
-
                         if (typeof web3 !== 'undefined') {
                             web3 = new Web3(web3.currentProvider);
                         }else{
-                            web3 = new Web3(new Web3.providers.HttpProvider('https://mainnet.infura.io/metamask'));
-                            // if(!web3.isConnected())
-                            //     alert("not connected");
-                            // else
-                            //     alert("connected");
+                            // web3 = new Web3(new Web3.providers.HttpProvider('https://mainnet.infura.io/metamask'));
+                            web3 = new Web3(new Web3.providers.HttpProvider('https://ropsten.infura.io/metamask'));
                         }
-                               
                         try{
                             web3.eth.sendTransaction(
                                 {
@@ -1078,6 +1100,8 @@ var M = {
                 window.webkit.messageHandlers.netStatus.postMessage({indexName:'net'});
                 //lang
                 window.webkit.messageHandlers.phoneLanguage.postMessage({indexName:'lan'});
+
+                M.getIosUserInfo();
             }
 
             M.curLang = M.getLang();
@@ -1085,6 +1109,8 @@ var M = {
             M.UserId = M.getUserId();
             M.UserName = M.getUserName();
             M.Avatar = M.getAvatar();
+
+           // alert(M.UserId+M.UserName+M.Avatar);
             
             M.myInfoc = M.getInfoc();
 
