@@ -52,7 +52,7 @@ var M = {
 
         str = '?'+str;
 
-        var infocUrl = 'http://helpdappstore1.ksmobile.com',
+        var infocUrl = 'https://helpdappstore1.ksmobile.com',
         infocParams = {
             ver: M.getParameter('ver', str), 
             mcc: M.getParameter('mcc', str), 
@@ -355,9 +355,6 @@ var M = {
                         }
                         btn.removeClass('anim')
                     }, 1200)
-                    
-                    console.log(data)
-                    
 
                 }
             });
@@ -508,7 +505,6 @@ var M = {
             data: {'data':strParam},
             dataType: "json",
             success: function(data){
-                console.log(data)
                 btn.removeClass('disabled')
                 $('.loading').hide();
 
@@ -567,7 +563,6 @@ var M = {
             if (!M.isLoadingRecord) {
                 M.isLoadingRecord = true;
                 M.getRecord(M.record.pagination.offset);
-                console.log('load')
             }
         }
     }
@@ -596,7 +591,6 @@ var M = {
             data: {'data':strParam},
             dataType: "json",
             success: function(data){
-                console.log(data)
                 if(data.ret == 0){
                     var expiresTime = data.data.expires_at*1000;
                     M.shareImg({
@@ -654,7 +648,6 @@ var M = {
                 data: checkParam ,
                 dataType: "json",
                 success: function(data){
-                    console.log(data)
                     if(data.ret == 0){  
 
                         param = {
@@ -690,7 +683,6 @@ var M = {
                                     , value: web3.toWei(playMoney+'', 'ether')
                                 }
                                 , function(err, addr){
-                                    console.log(addr)
                                     if(addr != undefined){                                      
                                         param.guid = web3.sha3( M.walletAddr+(new Date().getTime()));
                                         param.transaction_id = addr;
@@ -706,30 +698,6 @@ var M = {
                         
                         
 
-                       /* 
-                        // console.log(web3)
-                        // web3 = new Web3(M.web3Provider);
-                        M.createPackage( contract, playMoney, function(r, data){
-                            console.log(r);
-                            console.log(data);
-
-                            if(r == 1){
-
-                                param.transaction_id = data.transactionHash;
-                                param.guid = data.randomHash;
-                                M.sendToBehide(param);
-                                M.shareImg({
-                                    count: count //红包个数
-                                    , money: playMoney //金额
-                                    , word: word //口令
-                                    , time: new Date().getTime()
-                                });                                
-                                
-                            }else if(r == 0){
-
-                            }
-                            btn.removeClass('disabled');
-                        })*/
                     }else{
                         var msg = data.msg;
                         if(data.ret == 10002){
@@ -779,7 +747,6 @@ var M = {
             data: param ,
             dataType: "json",
             success: function(data){
-                console.log(data)
                 if(data.ret == 0){
                     var html = [], status = '', time = 0;
                     //判断首页是否显示查看记录
@@ -842,7 +809,6 @@ var M = {
             data: param ,
             dataType: "json",
             success: function(data){
-                console.log(data)
                 if(data.ret == 0){
                     try {
                     var html = []
@@ -1006,7 +972,6 @@ var M = {
         var r = url.substr(1).match(reg);  
 
         if (r != null)  
-            // console.log(r[2]);
             return r[2];  
         return null;  
     }
@@ -1127,7 +1092,6 @@ var M = {
             M.Avatar = M.getAvatar();
             
             M.myInfoc = M.getInfoc();
-            // alert(M.myInfoc)
 
         }catch(e){}        
 
@@ -1174,7 +1138,6 @@ var M = {
                         data: {} ,
                         dataType: "json",
                         success: function(data){
-                            console.log(data)
                             if(data.ret == 0){
                                 M.moneyMax = data.data.max;//红包金额最大
                                 M.moneyMin = data.data.min;//红包金额最小
@@ -1218,7 +1181,6 @@ var M = {
                     
             }
             , error: function(err){
-                console.log(err.msg)
             }
         })
   

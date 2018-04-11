@@ -9,7 +9,8 @@
   "author": "victor",
   "license": "ISC",
   "devDependencies": {
-    "gulp": "^3.9.0",
+    "browser-sync": "^2.18.8",
+    "gulp": "^3.9.1",
     "gulp-clean": "^0.3.1",
     "gulp-concat": "^2.6.0",
     "gulp-connect": "^2.2.0",
@@ -19,8 +20,8 @@
     "gulp-notify": "^2.2.0",
     "gulp-rename": "^1.2.2",
     "gulp-sourcemaps": "^1.5.2",
-    "browser-sync": "^2.18.8",
-    "gulp": "^3.9.1",
-    "gulp-uglify": "^2.0.1"
+    "gulp-uglify": "^2.1.2",
+    "pump": "^3.0.0",
+    "uglify-js": "^3.3.20"
   }
 }
