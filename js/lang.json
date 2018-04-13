@@ -25,6 +25,7 @@
             , "msg6": "Password must be at least 6 characters long"
             , "msg7": "Password must not exceed 20 characters"
             , "msg8": "Please make sure each packets' minimum amount is 0.0001 ETH or more"
+            , "msg9": "Gas fee for grabbing packet: <span>0.000000 ETH</span>"
             , "title": "Send Coin Packet"
             , "money": "Amount"
             , "moneyDes": "Random amount"
@@ -83,8 +84,8 @@
         "index":{
             "title": "红包发币"
             , "sub": "猎豹移动出品"
-            , "btn1": "抢红包"
-            , "btn2": "发红包"
+            , "btn1": "抢口令红包"
+            , "btn2": "发口令红包"
             , "tryTip": "试试给大家发个红包"
             , "cardTitle": "“红包发币”是什么？"
             , "p1": "别名：区块链上的虚拟货币红包"
@@ -105,7 +106,8 @@
             , "msg6": "最少输入6个字"
             , "msg7": "最多输入20字"
             , "msg8": "一个红包最小金额0.0001 ETH"
-            , "title": "发红包"
+            , "msg9": "抢红包交易费: <span>0.000000 ETH</span>"
+            , "title": "发口令红包"
             , "money": "总金额"
             , "moneyDes": "金额将随机分配"
             , "count": "红包数"
@@ -141,7 +143,7 @@
 
         }
         , "snatch":{
-        	"title": "抢红包"
+        	"title": "抢口令红包"
             , "lable": "输入“红包口令”"
             , "btn": "确认口令"
             , "late": "红包已经发完"
@@ -165,8 +167,8 @@
         "index":{
             "title": "紅包發幣"
             , "sub": "獵豹移動出品"
-            , "btn1": "搶紅包"
-            , "btn2": "發紅包"
+            , "btn1": "搶口令紅包"
+            , "btn2": "發口令紅包"
             , "tryTip": "試試給大家發個紅包"
             , "cardTitle": "“紅包發幣”是什麼？"
             , "p1": "別名：區塊鏈上的虛擬貨幣紅包"
@@ -187,7 +189,8 @@
             , "msg6": "最少輸入6個字"
             , "msg7": "最多輸入20字"
             , "msg8": "一個紅包最小金額0.0001 ETH"
-            , "title": "發紅包"
+            , "msg9": "搶紅包交易費: <span>0.000000 ETH</span>"
+            , "title": "發口令紅包"
             , "money": "總金額"
             , "moneyDes": "金額將隨機分配"
             , "count": "紅包數"
@@ -222,7 +225,7 @@
 
         }
         , "snatch": {
-        	 "title": "搶紅包"
+        	 "title": "搶口令紅包"
             , "lable": "輸入“紅包口令”"
             , "btn": "確認口令"
             , "late": "紅包已經發完"

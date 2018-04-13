@@ -8,6 +8,7 @@ var M = {
     , curLang: 'en'
     , lang: {}
     , iosNet: false
+    , isClose: false//设置ios中是否点击了关闭按钮
     , myInfoc: null
     , userInfo: null
     , isInDapp: function(){
@@ -81,7 +82,7 @@ var M = {
             var name = "currentUserInfo";
             var payload = {type: type, functionName: name};
 
-            M.userInfo = prompt(JSON.stringify (payload));
+            M.userInfo = JSON.parse(prompt(JSON.stringify (payload)));
         } catch(err) {}
     }
     , getUserId: function(){
@@ -91,6 +92,22 @@ var M = {
             return M.userInfo.userid;
         }
         return '';
+    }
+    , closeCurrentActivity: function(){
+        if(M.isInDapp()){
+            RedEnvelopeHost.onBackToRedEnvelope();
+        }else if(M.isInIosDapp()){
+            try {
+                var type = "SJbridge";
+                if(M.isClose){
+                    var name = "closeSnatchView";
+                }else{
+                    name = "removeSnatchView";
+                }
+                var payload = {type: type, functionName: name};
+                var res = prompt(JSON.stringify (payload));
+            }catch(err) {}
+        }
     }
     , getUserName: function(){
         if(M.isInDapp()){
@@ -112,7 +129,7 @@ var M = {
         if(M.isInDapp()){
             return RedEnvelopeHost.getRedPacketPwd();
         }else if(M.isInIosDapp()){
-            return '';
+            return M.userInfo.password;
         }
         return '';
 
@@ -358,9 +375,8 @@ var M = {
                             M.jumpUrl('detail.html?word='+encodeURIComponent(word));
                             //是否从chat进入
                             if($('body').hasClass('chat')){
-                                if(M.isInDapp()){
-                                    RedEnvelopeHost.onBackToRedEnvelope();
-                                }
+                                M.isClose = false;
+                                M.closeCurrentActivity();
                             }
                         }else if(data.ret == 10004){ //no such red packet
 
@@ -373,9 +389,8 @@ var M = {
                             M.jumpUrl('detail.html?word='+encodeURIComponent(word));
                             //是否从chat进入
                             if($('body').hasClass('chat')){
-                                if(M.isInDapp()){
-                                    RedEnvelopeHost.onBackToRedEnvelope();
-                                }
+                                M.isClose = false;
+                                M.closeCurrentActivity();
                             }
                         }else {
                             M.showToast(data.msg)
@@ -399,9 +414,8 @@ var M = {
         $('.pop-close').click(function(){
             // alert('generate image');
             if($('body').hasClass('chat')){
-                if(M.isInDapp()){
-                    RedEnvelopeHost.onBackToRedEnvelope();
-                }
+                M.isClose = true;
+                M.closeCurrentActivity();
             }else{
                 $('.pop-envelope').removeClass('late expire').hide();
             }
@@ -430,6 +444,7 @@ var M = {
                 }      
                 checkBtnStatus(str, isHasError, $(this));
                 isClick(isHasError);
+                isGetGas(isHasError,  $('#iptMoney'));
                
             })
         }
@@ -453,6 +468,7 @@ var M = {
                 $('.money .big').html(v)
                 checkBtnStatus(str, isHasError, $(this));
                 isClick(isHasError);
+                isGetGas(isHasError, $('#iptCount'));
             })
         }
         
@@ -512,6 +528,41 @@ var M = {
             
         }
 
+        function isGetGas(isHasError, ipt){
+            //若金额及红包数input没有错误做请求
+            if(!isHasError && !ipt.hasClass('error')){
+
+                var playMoney = $('.send input[name=eth]').val()
+                    , count = $('.send input[name=number]').val()
+                    , checkParam = {
+                        value: playMoney
+                        , count: count
+                    };
+
+                $.ajax({
+                    type: "POST",
+                    url: M.path + "/check",
+                    data: checkParam ,
+                    dataType: "json",
+                    success: function(data){
+                        console.log(data)
+                        if(data.ret == 10001){  
+                            var gas = data.data.estimateGas+'';
+                            gas = gas.substring(0,gas.indexOf(".")+7)
+                            $('.gas span').html(gas+' ETH');
+                        }else{
+                        }
+                    },
+                    error:function(e){
+                        alert(e)
+                    }
+                });   
+            }else{
+                $('.gas span').html('0.000000 ETH');
+
+            }
+        }
+
         if($('body').hasClass('record')){
             $(window).scroll(function() {
                 M.scrollLoad();
@@ -548,7 +599,8 @@ var M = {
                         $('.pop-envelope').addClass('late').show();
                     }else if(data.ret == 10003){                            
                         M.jumpUrl('detail.html?word='+encodeURIComponent(word));
-                        RedEnvelopeHost.onBackToRedEnvelope();
+                        M.isClose = false;
+                        M.closeCurrentActivity();
                     }else {
                         M.showToast(data.msg)
                     }
@@ -752,7 +804,6 @@ var M = {
             , count : 8
             , sender: M.walletAddr
         }
-        // alert(M.walletAddr)
 
         //如果是第二次加载 
         if(offset != 0){
@@ -765,7 +816,7 @@ var M = {
             dataType: "json",
             success: function(data){
                 if(data.ret == 0){
-                    var html = [], status = '', time = 0;
+                    var html = [], status = '', time = 0, date = null;
                     //判断首页是否显示查看记录
                     if(data.data.length > 0 && $('body').hasClass('index')){
                         $('.tip-box').addClass('show');
@@ -866,6 +917,7 @@ var M = {
                         , avatar = ''
                         , page = 0
                         , time = 0
+                        , date = null
                         ;
                     
                     $.each(data.data.records, function(i, ele){
@@ -902,6 +954,8 @@ var M = {
                             avatar = 'images/default.png';
                         }
                         time = new Date(ele.created_at*1000).toLocaleString();
+                        // date = new Date(ele.created_at*1000);
+                        // time = date.getFullYear()+'/'+M.checkTime(date.getMonth()+1)+'/'+M.checkTime(date.getDate())+' '+M.checkTime(date.getHours())+':'+M.checkTime(date.getMinutes())+':'+M.checkTime(date.getSeconds());
                         html.push('<dd>'+
                             '<img src="'+ avatar +'">'+
                             '<div class="info">'+
@@ -954,7 +1008,7 @@ var M = {
                             count: count //红包个数
                             , money: data.data.info.total_value //金额
                             , word: data.data.info.word //口令
-                            , time: data.expires_at*1000
+                            , time: data.data.info.expires_at*1000
                         })
                     })
                 }catch(e){alert(e)}
@@ -1011,6 +1065,8 @@ var M = {
         $('.btn-send-envelution').html(M.lang[M.curLang]['send']['btn']);
         $('.after-tip').html(M.lang[M.curLang]['send']['tip']);
         
+        $('.gas').html(M.lang[M.curLang]['send']['msg9']);
+        
         var source = M.getEvelopSource();
        
         //1表示单点，2表示群红包，0表示不是从chat进入的
@@ -1056,6 +1112,7 @@ var M = {
         var word = '';
         try{
             word = M.getEnvelopWord();
+            // alert(word)
         }catch(e){
         }
         if(word != ''){
@@ -1109,8 +1166,6 @@ var M = {
             M.UserId = M.getUserId();
             M.UserName = M.getUserName();
             M.Avatar = M.getAvatar();
-
-           // alert(M.UserId+M.UserName+M.Avatar);
             
             M.myInfoc = M.getInfoc();
 
@@ -1148,9 +1203,11 @@ var M = {
 
                 M.bind();
 
+                // M.curLang = 'en'
+
                 var page = 1;
 
-                if($('body').hasClass('send')){                    
+                if($('body').hasClass('send')){
                     page = 4;
                     
                     $.ajax({
@@ -1163,7 +1220,7 @@ var M = {
                                 M.moneyMax = data.data.max;//红包金额最大
                                 M.moneyMin = data.data.min;//红包金额最小
                                 M.unit = data.data.unit; //红包最小单位 
-                                M.count = 500; //红包最大数量 
+                                M.count = data.data.maxCount; //红包最大数量 
                                 M.initSend();
                                 $('.loading').hide();
                                 $('body').removeClass('load');
