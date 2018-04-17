@@ -2,12 +2,12 @@ var M = {
     walletAddr: ''
     , contracts: {}
     // , contractAccount:'0x3c9ffbb8922264a012464a2bdf12fd4d8ca1ff62'
-    // , path: 'https://blockchain.ijinshan.com/redpacket'
+    , path: 'https://blockchain.ijinshan.com/redpacket'
     , infocPath: 'https://helpdappstore1.ksmobile.com/g/v1/'
 
     //test
     , contractAccount: '0x9264f90fc14af5e2335bb4be65a617467ecd2af7'
-    , path: 'http://blockchain.ijinshan.com/redpacket'
+    // , path: 'http://blockchain.ijinshan.com/redpacket'
     // , infocPath: 'http://helpdebug.ksmobile.com/g/v1/'
 
     , isLoadingRecord: false//是否还在请求
