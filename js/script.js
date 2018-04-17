@@ -1,7 +1,15 @@
 var M = {
     walletAddr: ''
     , contracts: {}
-    , path: 'https://blockchain.ijinshan.com/redpacket'
+    // , contractAccount:'0x3c9ffbb8922264a012464a2bdf12fd4d8ca1ff62'
+    // , path: 'https://blockchain.ijinshan.com/redpacket'
+    , infocPath: 'https://helpdappstore1.ksmobile.com/g/v1/'
+
+    //test
+    , contractAccount: '0x9264f90fc14af5e2335bb4be65a617467ecd2af7'
+    , path: 'http://blockchain.ijinshan.com/redpacket'
+    // , infocPath: 'http://helpdebug.ksmobile.com/g/v1/'
+
     , isLoadingRecord: false//是否还在请求
     , record :  null
     , timerToast: null
@@ -54,21 +62,23 @@ var M = {
 
         str = '?'+str;
 
-        var infocUrl = 'https://helpdappstore1.ksmobile.com',
+        var infocUrl = M.infocPath,
         infocParams = {
-            ver: M.getParameter('ver', str), 
-            mcc: M.getParameter('mcc', str), 
-            cn: M.getParameter('cn', str),
-            xaid: M.getParameter('xaid', str),
-            osver: M.getParameter('osver', str), 
+            product_no:220,//产品
+            public_index:2,
+            ver: M.getParameter('ver', str) || 0, 
+            mcc: M.getParameter('mcc', str) || 0, 
+            cn: M.getParameter('cn', str) || '0',
+            xaid: M.getParameter('xaid', str) || '0',
+            osver: M.getParameter('osver', str) || '0', 
             mnc: 0, //网络id
             cl: (navigator.language || navigator.browserLanguage),//国家语言
-            cn2: '',//辅助渠道号
+            cn2: '0',//辅助渠道号
             loc_time: 1,
-            brand: '',
-            model: '', 
-            romver: '',//rom版本号 
-            adid:'',
+            brand: '0',
+            model: '0', 
+            romver: '0',//rom版本号 
+            adid:'0',
             apilevel:23
         };
 
@@ -147,6 +157,7 @@ var M = {
             M.myInfoc.report({
                 page: 7
                 , dappstore_red_packet_page_im:132
+                , business_index:132
             });
             
 
@@ -266,22 +277,24 @@ var M = {
         return param;
     }
     , bind: function(){
-        // $('.btn-send, .btn-snatch, .tip-record, .btn-generate, .snatch .btn-confirm-pw, .send .btn-send-envelution, .detail .btn-share').click(function(){
-        //     // M.myInfoc.report({
-        //     //     page: $('this').attr('page')
-        //     //     , dappstore_red_packet_page_click:133
-        //     // });
-        // })
+        $('.btn-send, .btn-snatch, .tip-record, .btn-generate, .snatch .btn-confirm-pw, .send .btn-send-envelution, .detail .btn-share').click(function(){
+            M.myInfoc.report({
+                page: $(this).attr('page')
+                , dappstore_red_packet_page_click:133
+                , business_index: 133
+            });
+        })
 
         $('html').on('click', '.dialog .btn-cancel', function(){
             $('.dialog').hide();
         })
 
-        $('body').on('click', '.btn-ok', function(){
-            // M.myInfoc.report({
-            //     page: 8
-            //     , dappstore_red_packet_page_click:133
-            // });
+        $('body').on('click', '.dialog .btn-ok', function(){
+            M.myInfoc.report({
+                page: 8
+                , dappstore_red_packet_page_click:133
+                , business_index:133
+            });
         })
 
 
@@ -370,7 +383,7 @@ var M = {
 
                     setTimeout(function(){
                         btn.removeClass('disabled')
-
+                        var result = 0;
                         if(data.ret == 0){
                             M.jumpUrl('detail.html?word='+encodeURIComponent(word));
                             //是否从chat进入
@@ -378,11 +391,14 @@ var M = {
                                 M.isClose = false;
                                 M.closeCurrentActivity();
                             }
+
+                            result = 1;
                         }else if(data.ret == 10004){ //no such red packet
 
                             M.showToast(data.msg);
 
                         }else if(data.ret == 10005){//late
+                            result = 2;
                             $('.pop-envelope .view-detail').attr('url', 'detail.html?word='+encodeURIComponent(word));
                             $('.pop-envelope').addClass('late').show();
                         }else if(data.ret == 10003){                            
@@ -395,7 +411,14 @@ var M = {
                         }else {
                             M.showToast(data.msg)
                         }
-                        btn.removeClass('anim')
+                        btn.removeClass('anim');
+                        if(result != 0){
+                            M.myInfoc.report({
+                                result: result
+                                , dappstore_red_packet_dialog_open_click:135
+                                , business_index:135
+                            });
+                        }
                     }, 1200)
 
                 }
@@ -585,6 +608,26 @@ var M = {
             success: function(data){
                 btn.removeClass('disabled')
                 $('.loading').hide();
+                var result = 0;
+                if(data.ret == 0){
+                    result = 1;
+                }else if(data.ret == 10004){ //no such red packet即过期
+                    result = 2;
+                }else if(data.ret == 10005){//late
+                       
+                }else if(data.ret == 10003){//已经抢过   
+                    result = 3;
+                }else if(data.ret == 10008){ //blocked for 5 hours
+                    result = 4;
+                }
+
+                if(result != 0){
+                    M.myInfoc.report({
+                        result: result
+                        , dappstore_red_packet_confirm_password_click:134
+                        , business_index:134
+                    });
+                }
 
                 //是否从chat进入
                 if($('body').hasClass('chat')){
@@ -727,8 +770,9 @@ var M = {
                 data: checkParam ,
                 dataType: "json",
                 success: function(data){
+                    var result= 0;
                     if(data.ret == 0){  
-
+                        result= 1;
                         param = {
                             value: playMoney
                             , word: word
@@ -740,15 +784,14 @@ var M = {
                         if (typeof web3 !== 'undefined') {
                             web3 = new Web3(web3.currentProvider);
                         }else{
-                            // web3 = new Web3(new Web3.providers.HttpProvider('https://mainnet.infura.io/metamask'));
-                            web3 = new Web3(new Web3.providers.HttpProvider('https://ropsten.infura.io/metamask'));
+                            web3 = new Web3(new Web3.providers.HttpProvider('https://mainnet.infura.io/metamask'));
+                            // web3 = new Web3(new Web3.providers.HttpProvider('https://ropsten.infura.io/metamask'));
                         }
                         try{
                             web3.eth.sendTransaction(
                                 {
                                     from: M.walletAddr, 
-                                    to: '0x9264f90fc14af5e2335bb4be65a617467ecd2af7'
-                                    // to: '0x3c9ffbb8922264a012464a2bdf12fd4d8ca1ff62'
+                                    to: M.ContractAccount
                                     , value: web3.toWei(playMoney+'', 'ether')
                                 }
                                 , function(err, addr){
@@ -764,18 +807,25 @@ var M = {
                                     }
                             });
                         }catch(e){alert(e)}
-                        
-                        
-
                     }else{
                         var msg = data.msg;
-                        if(data.ret == 10002){
+                        if(data.ret == 10002){//您的金额不够付抢红包所需的交易费
                             msg = M.lang[M.curLang]['send']['msg1'];
-                        }else if(data.ret == 10003){
+                            result = 2;
+                        }else if(data.ret == 10003){//这个口令已经被使用，换一个吧
                             msg = M.lang[M.curLang]['send']['msg2'];
+                            result = 3;
                         }
                         M.showToast(msg);
                         btn.removeClass('disabled');
+                    }
+
+                    if(result != 0){
+                        M.myInfoc.report({
+                            result: result
+                            , dappstore_red_packet_send_btn_click:136
+                            , business_index:136
+                        });
                     }
                 },
                 error:function(e){
@@ -919,7 +969,6 @@ var M = {
                         , time = 0
                         , date = null
                         ;
-                    
                     $.each(data.data.records, function(i, ele){
                         if(data.data.records.length != 1 && ele.best_luck) {
                             bestLuck = '<i class="icon-crown">'+ M.lang[M.curLang]['detail']['lucky'] +'</i>';
@@ -987,6 +1036,7 @@ var M = {
                     M.myInfoc.report({
                         page: page
                         , dappstore_red_packet_page_im:132
+                        , business_index:132
                     });
 
                     //非自己发的红包，并且被别人抢完了，点击查看领取详情，头部应显示红包总额
@@ -1033,6 +1083,9 @@ var M = {
                 
             }
         });
+    }
+    , checkTime: function(time) {
+        return time;
     }
     , formatAddr: function(addr){
         return addr.substr(0,8) + '...' + addr.substr(-8,8)
@@ -1253,6 +1306,8 @@ var M = {
                     M.myInfoc.report({
                         page: page
                         , dappstore_red_packet_page_im:132
+                        , business_index:132
+
                     });
                 }
 
@@ -1266,6 +1321,7 @@ var M = {
 
 }
 $(function () {
+    // alert(new Date().getTimezoneOffset()/60)
     M.init();
 });
 
